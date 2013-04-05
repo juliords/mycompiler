@@ -13,7 +13,7 @@ TK_CHAR
 TK_ID (c)
 OTHER: ;
 TK_VOID
-TK_OP (*)
+TK_AST
 TK_ID (p)
 OTHER: ;
 TK_ID (i)
@@ -32,11 +32,11 @@ OTHER: ;
 TK_IF
 OTHER: (
 TK_ID (i)
-TK_OP (<=)
+TK_LEQUAL
 TK_ID (f)
-TK_OP (&&)
+TK_AND
 TK_ID (i)
-TK_OP (==)
+TK_EQUAL
 TK_ID (c)
 OTHER: )
 OTHER: {
@@ -46,7 +46,7 @@ TK_STR (qualquer "
  	 ' coisa %d)
 OTHER: ,
 TK_ID (i)
-TK_OP (+)
+TK_PLUS
 TK_ID (f)
 OTHER: )
 OTHER: ;

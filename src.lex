@@ -26,7 +26,18 @@ enum Tokens
 	TK_CMT,
 	TK_RET,
 
-	TK_OP
+	TK_PLUS,
+	TK_MINUS,
+	TK_AST,
+	TK_SLASH,
+	TK_EQUAL,
+	TK_LEQUAL,
+	TK_GEQUAL,
+	TK_LESS,
+	TK_GREATER,
+	TK_NOT,
+	TK_AND,
+	TK_OR
 };
 
 union 
@@ -86,7 +97,6 @@ INTEGER		"0"[0-7]*|"0"[xX][0-9A-Fa-f]+|[1-9][0-9]*
 CHAR		"'"([^']?|\\{ESCAPE})"'"
 FLOAT		[0-9]*"."[0-9]+([eE][-+]?[0-9]+)?[f]?
 STRING		\"([^\\"]|\\{ESCAPE})*\"
-OPERATOR	"+"|"-"|"*"|"/"|"=="|"<="|">="|"<"|">"|"!"|"&&"|"||"
 
 
 %%
@@ -101,6 +111,20 @@ if 	return TK_IF;
 else 	return TK_ELSE;
 while 	return TK_WHILE;
 return 	return TK_RET;
+
+"+"	return TK_PLUS;
+"-" 	return TK_MINUS;
+"*"	return TK_AST;
+"/"	return TK_SLASH;
+"=="	return TK_EQUAL;
+"<="	return TK_LEQUAL;
+">="	return TK_GEQUAL;
+"<"	return TK_LESS;
+">"	return TK_GREATER;
+"!"	return TK_NOT;
+"&&"	return TK_AND;
+"||"	return TK_OR;
+
 
 {INTEGER} {
 	Info.i = atoi(yytext);
@@ -137,10 +161,6 @@ return 	return TK_RET;
 	return TK_CMT;
 }
 
-{OPERATOR} {
-	Info.s = yytext;
-	return TK_OP;
-}
 
 [ \t\n]+	/* Eat up white space. */
 
@@ -202,10 +222,6 @@ int main(int argc, char *argv[])
 				printf("TK_NEW\n");
 				break;
 
-			case TK_OP:
-				printf("TK_OP (%s)\n", Info.s);
-				break;
-
 			case TK_ID:
 				printf("TK_ID (%s)\n", Info.s);
 				break;
@@ -228,6 +244,54 @@ int main(int argc, char *argv[])
 
 			case TK_RET:
 				printf("TK_RET\n");
+				break;
+
+			case TK_PLUS:
+				printf("TK_PLUS\n");
+				break;
+
+			case TK_MINUS:
+				printf("TK_MINUS\n");
+				break;
+
+			case TK_AST:
+				printf("TK_AST\n");
+				break;
+
+			case TK_SLASH:
+				printf("TK_SLASH\n");
+				break;
+
+			case TK_EQUAL:
+				printf("TK_EQUAL\n");
+				break;
+
+			case TK_LEQUAL:
+				printf("TK_LEQUAL\n");
+				break;
+
+			case TK_GEQUAL:
+				printf("TK_GEQUAL\n");
+				break;
+
+			case TK_LESS:
+				printf("TK_LESS\n");
+				break;
+
+			case TK_GREATER:
+				printf("TK_GREATER\n");
+				break;
+
+			case TK_NOT:
+				printf("TK_NOT\n");
+				break;
+
+			case TK_AND:
+				printf("TK_AND\n");
+				break;
+
+			case TK_OR:
+				printf("TK_OR\n");
 				break;
 
 			default:
