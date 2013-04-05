@@ -26,10 +26,10 @@ Os tokens de operadores e palavras reservadas são triviais. Os demais exigem us
 - Como a informação semantica é passada
 
 Foi criado um union com os tipos básicos de dados que são necessários. As strings e caracteres tem os caracteres das extremidades removidos e os escapes processados antes de serem passados para o nível superior.
+Os tokens criados começam com código acima do valor máximo que um char pode assumir. Isto ocorre pois, caso um char não seja reconhecido pelo analisador, seu código se torna o seu próprio token.
 
 
 - O que não foi feito
 
 Não foram implementadas regras para o caso de falha de outras regras, de forma a facilitar o debug do código.
-Testes podem não usam todos os tokens implementados, apenas os mais importantes.
 

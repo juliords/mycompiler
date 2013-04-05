@@ -209,6 +209,7 @@ int main(int argc, char *argv[])
 
 			case TK_FLOAT_I: 
 				printf("TK_FLOAT_I (%f)\n", Info.f); 
+				break;
 
 			case TK_VOID:
 				printf("TK_VOID\n");
