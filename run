@@ -1,0 +1,29 @@
+#!/bin/bash
+
+LEX_FILE=src.lex
+EXEC_FILE=exec
+
+TESTFD=./tests
+
+lex $LEX_FILE
+
+gcc lex.yy.c -lfl -o $EXEC_FILE
+rm lex.yy.c
+
+for FILE in $TESTFD/*.in
+do
+	F=`basename $FILE .in`
+	./$EXEC_FILE <"$TESTFD/$F.in" >"$TESTFD/$F.out"
+
+	diff "$TESTFD/$F.out" "$TESTFD/$F.gab"
+	if [ $? -ne 0 ]
+	then
+		echo "$F failed! :-("
+		exit 1
+	fi
+
+	rm "$TESTFD/$F.out"
+done
+
+echo "OK :-)"
+
