@@ -1,0 +1,15 @@
+TK_INT
+TK_ID (i)
+OTHER: ;
+TK_ID (i)
+OTHER: =
+TK_INT_I (10)
+OTHER: ;
+TK_ID (i)
+OTHER: =
+TK_INT_I (0)
+OTHER: ;
+TK_ID (i)
+OTHER: =
+TK_INT_I (10)
+OTHER: ;

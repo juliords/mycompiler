@@ -1,0 +1,21 @@
+TK_IF
+OTHER: (
+TK_ID (a)
+TK_EQUAL
+TK_ID (b)
+OTHER: )
+OTHER: {
+OTHER: }
+TK_ELSE
+OTHER: {
+OTHER: }
+TK_WHILE
+OTHER: (
+TK_ID (a)
+TK_LEQUAL
+TK_ID (b)
+OTHER: )
+OTHER: ;
+TK_RET
+TK_INT_I (0)
+OTHER: ;

@@ -1,0 +1,34 @@
+TK_INT
+TK_ID (main)
+OTHER: (
+OTHER: )
+OTHER: {
+TK_INT
+TK_ID (i)
+OTHER: =
+TK_INT_I (100)
+OTHER: ;
+TK_CMT (/* apenas mais um programa de teste */)
+TK_WHILE
+OTHER: (
+TK_ID (i)
+TK_GEQUAL
+TK_INT_I (0)
+OTHER: )
+OTHER: {
+TK_ID (printf)
+OTHER: (
+TK_STR (Hello World "#%d")
+OTHER: ,
+TK_ID (i)
+OTHER: )
+OTHER: ;
+TK_ID (i)
+TK_MINUS
+TK_MINUS
+OTHER: ;
+OTHER: }
+TK_RET
+TK_INT_I (0)
+OTHER: ;
+OTHER: }

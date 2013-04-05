@@ -1,0 +1,21 @@
+TK_CHAR
+TK_AST
+TK_ID (s)
+OTHER: ;
+TK_ID (s)
+OTHER: =
+TK_STR (ola mundo)
+OTHER: ;
+TK_ID (s)
+OTHER: =
+TK_STR (")
+OTHER: ;
+TK_ID (s)
+OTHER: =
+TK_STR (
+)
+OTHER: ;
+TK_ID (s)
+OTHER: =
+TK_STR (	)
+OTHER: ;

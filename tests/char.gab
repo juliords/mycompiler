@@ -1,0 +1,20 @@
+TK_CHAR
+TK_ID (c)
+OTHER: ;
+TK_ID (c)
+OTHER: =
+TK_CHAR_I (a)
+OTHER: ;
+TK_ID (c)
+OTHER: =
+TK_CHAR_I (
+)
+OTHER: ;
+TK_ID (c)
+OTHER: =
+TK_CHAR_I (')
+OTHER: ;
+TK_ID (c)
+OTHER: =
+TK_CHAR_I (")
+OTHER: ;

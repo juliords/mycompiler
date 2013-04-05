@@ -1,0 +1,7 @@
+
+char *s; 
+
+s = "ola mundo";
+s = "\"";
+s = "\n";
+s = "\t";

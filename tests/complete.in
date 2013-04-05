@@ -1,0 +1,15 @@
+
+int main ()
+{
+	int i = 100;
+
+	/* apenas mais um programa de teste */
+	while(i >= 0)
+	{
+		printf("Hello World \"#%d\"", i);
+
+		i--;
+	}
+
+	return 0;
+}

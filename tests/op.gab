@@ -1,0 +1,47 @@
+TK_ID (a)
+TK_PLUS
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_MINUS
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_AST
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_SLASH
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_EQUAL
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_LEQUAL
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_GEQUAL
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_LESS
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_GREATER
+TK_ID (b)
+OTHER: ;
+TK_NOT
+TK_ID (a)
+OTHER: ;
+TK_ID (a)
+TK_AND
+TK_ID (b)
+OTHER: ;
+TK_ID (a)
+TK_OR
+TK_ID (b)
+OTHER: ;
