@@ -7,38 +7,7 @@
 
 #include <limits.h>
 
-enum Tokens
-{
-	TK_INT = UCHAR_MAX+1,
-	TK_INT_I,
-	TK_CHAR,
-	TK_CHAR_I,
-	TK_FLOAT,
-	TK_FLOAT_I,
-	TK_VOID,
-	TK_STR,
-	TK_NEW,
-
-	TK_ID,
-	TK_IF,
-	TK_ELSE,
-	TK_WHILE,
-	TK_CMT,
-	TK_RET,
-
-	TK_PLUS,
-	TK_MINUS,
-	TK_AST,
-	TK_SLASH,
-	TK_EQUAL,
-	TK_LEQUAL,
-	TK_GEQUAL,
-	TK_LESS,
-	TK_GREATER,
-	TK_NOT,
-	TK_AND,
-	TK_OR
-};
+#include "y.tab.h"
 
 union 
 {
@@ -176,7 +145,7 @@ int main(int argc, char *argv[])
 {
 	int tk;
 
-	++argv, --argc;	/* Skip over program name. */
+	++argv, --argc;
 	if (argc > 0)
 		yyin = fopen(argv[0], "r");
 	else
