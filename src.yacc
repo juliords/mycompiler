@@ -41,7 +41,7 @@ dec_variavel
 
 lista_nomes 
 	: TK_ID 
-	| TK_ID ',' TK_ID
+	| TK_ID ',' lista_nomes
 	;
 
 tipo 
@@ -63,7 +63,7 @@ dec_funcao
 parametros 
 	: /* vazio */ 
 	| parametro 
-	| parametro ',' parametro
+	| parametro ',' parametros
 	;
 
 parametro 
@@ -76,8 +76,8 @@ bloco
 	;
 
 comando 
-	: TK_IF '(' exp ')' comando
-	| TK_IF '(' exp ')' comando TK_ELSE comando
+	: TK_IF '(' exp ')' comando TK_ELSE comando
+	| TK_IF '(' exp ')' comando
         | TK_WHILE '(' exp ')' comando
         | var '=' exp ';'
         | TK_RET [ exp ] ';'
@@ -120,7 +120,8 @@ chamada
 
 lista_exp 
 	: /* vazio */ 
-	| exp { ',' exp }
+	| exp ',' lista_exp
+	| exp
 	;
 
 
@@ -136,3 +137,4 @@ int main()
 {
 	return yyparse();	
 }
+

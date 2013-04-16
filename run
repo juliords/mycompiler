@@ -7,7 +7,7 @@ EXEC_FILE=exec
 TESTFD=./tests
 
 lex $LEX_FILE
-yacc -d src.yacc
+yacc -d -v src.yacc
 
 gcc lex.yy.c -lfl -o $EXEC_FILE
 rm lex.yy.c y.tab.*
