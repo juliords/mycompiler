@@ -139,6 +139,7 @@ return 	return TK_RET;
 
 %%
 
+#if MAINLEX
 
 int main(int argc, char *argv[])
 {
@@ -269,4 +270,6 @@ int main(int argc, char *argv[])
 		}
 	}
 }
+
+#endif
 

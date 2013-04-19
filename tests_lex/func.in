@@ -1,0 +1,6 @@
+
+void* func(int i, char c, float f, void *p)
+{
+	return p;
+}
+

@@ -1,0 +1,22 @@
+TK_VOID
+TK_AST
+TK_ID (func)
+OTHER: (
+TK_INT
+TK_ID (i)
+OTHER: ,
+TK_CHAR
+TK_ID (c)
+OTHER: ,
+TK_FLOAT
+TK_ID (f)
+OTHER: ,
+TK_VOID
+TK_AST
+TK_ID (p)
+OTHER: )
+OTHER: {
+TK_RET
+TK_ID (p)
+OTHER: ;
+OTHER: }

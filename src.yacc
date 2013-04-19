@@ -24,6 +24,9 @@
 %nonassoc UNARY_MINUS
 %nonassoc UNARY_NOT
 
+%nonassoc TK_THEN
+%nonassoc TK_ELSE
+
 %%
 
 programa 
@@ -41,7 +44,7 @@ dec_variavel
 
 lista_nomes 
 	: TK_ID 
-	| TK_ID ',' lista_nomes
+	| lista_nomes ',' TK_ID
 	;
 
 tipo 
@@ -63,7 +66,7 @@ dec_funcao
 parametros 
 	: /* vazio */ 
 	| parametro 
-	| parametro ',' parametros
+	| parametros ',' parametro
 	;
 
 parametro 
@@ -76,8 +79,8 @@ bloco
 	;
 
 comando 
-	: TK_IF '(' exp ')' comando TK_ELSE comando
-	| TK_IF '(' exp ')' comando
+	: TK_IF '(' exp ')' comando %prec TK_THEN
+	| TK_IF '(' exp ')' comando TK_ELSE comando
         | TK_WHILE '(' exp ')' comando
         | var '=' exp ';'
         | TK_RET [ exp ] ';'
@@ -120,8 +123,8 @@ chamada
 
 lista_exp 
 	: /* vazio */ 
-	| exp ',' lista_exp
 	| exp
+	| lista_exp ',' exp
 	;
 
 
@@ -133,8 +136,11 @@ int yyerror(char *s)
 	printf("%s\n", s);
 }
 
+#if MAINYACC
+
 int main()
 {
 	return yyparse();	
 }
 
+#endif
