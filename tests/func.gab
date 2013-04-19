@@ -1,6 +1,14 @@
+TK_INT
+TK_ID (func1)
+OTHER: (
+OTHER: )
+OTHER: {
+TK_RET
+TK_INT_I (0)
+OTHER: ;
+OTHER: }
 TK_VOID
-TK_AST
-TK_ID (func)
+TK_ID (func2)
 OTHER: (
 TK_INT
 TK_ID (i)
@@ -12,7 +20,6 @@ TK_FLOAT
 TK_ID (f)
 OTHER: ,
 TK_VOID
-TK_AST
 TK_ID (p)
 OTHER: )
 OTHER: {

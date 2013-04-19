@@ -1,3 +1,8 @@
+TK_VOID
+TK_ID (test)
+OTHER: (
+OTHER: )
+OTHER: {
 TK_CHAR
 TK_ID (c)
 OTHER: ;
@@ -18,3 +23,4 @@ TK_ID (c)
 OTHER: =
 TK_CHAR_I (")
 OTHER: ;
+OTHER: }

@@ -1,0 +1,19 @@
+
+int test()
+{
+	if( a == b )
+	{
+
+	}
+	else
+	{
+
+	}
+
+	while ( a <= b )
+	{
+	
+	}
+
+	return 0;
+}

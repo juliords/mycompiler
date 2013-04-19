@@ -1,0 +1,11 @@
+
+/* testando comentario */
+
+void test()
+{
+	/*
+
+	agora comentario de varias linhas
+
+	*/
+}

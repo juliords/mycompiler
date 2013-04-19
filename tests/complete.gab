@@ -5,6 +5,8 @@ OTHER: )
 OTHER: {
 TK_INT
 TK_ID (i)
+OTHER: ;
+TK_ID (i)
 OTHER: =
 TK_INT_I (100)
 OTHER: ;
@@ -24,8 +26,10 @@ TK_ID (i)
 OTHER: )
 OTHER: ;
 TK_ID (i)
+OTHER: =
+TK_ID (i)
 TK_MINUS
-TK_MINUS
+TK_INT_I (1)
 OTHER: ;
 OTHER: }
 TK_RET

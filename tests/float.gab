@@ -1,3 +1,8 @@
+TK_VOID
+TK_ID (test)
+OTHER: (
+OTHER: )
+OTHER: {
 TK_FLOAT
 TK_ID (f)
 OTHER: ;
@@ -17,3 +22,4 @@ TK_ID (f)
 OTHER: =
 TK_FLOAT_I (0.000012)
 OTHER: ;
+OTHER: }

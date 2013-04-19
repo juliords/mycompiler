@@ -1,3 +1,8 @@
+TK_INT
+TK_ID (test)
+OTHER: (
+OTHER: )
+OTHER: {
 TK_IF
 OTHER: (
 TK_ID (a)
@@ -15,7 +20,9 @@ TK_ID (a)
 TK_LEQUAL
 TK_ID (b)
 OTHER: )
-OTHER: ;
+OTHER: {
+OTHER: }
 TK_RET
 TK_INT_I (0)
 OTHER: ;
+OTHER: }

@@ -16,11 +16,15 @@ function check_error {
 
 # variable declaration area
 
+CC=gcc
+LEX=lex
+YACC=yacc
+
 LEX_FILE=src.lex
 YACC_FILE=src.yacc
 
 LEXFLAGS=""
-YACCFLAGS="-d -v"
+YACCFLAGS="-d -v --debug"
 
 CCFLAGS="-ansi -O2 -lfl"
 CCFLAGSLEX="-DMAINLEX"
@@ -29,60 +33,82 @@ CCFLAGSYACC="-DMAINYACC"
 EXEC_LEX=clex
 EXEC_YACC=cyacc
 
-TESTLEXFD=./tests_lex
+TESTFD=./tests
+
+# ----------------------------------------------
+
+echo "----------------------------------------"
+echo "PUC-Rio / Compiladores / Linguagem Monga" 
+echo "Julio Ribeiro da Silva - 0911409" 
+echo "----------------------------------------"
+echo 
 
 # ----------------------------------------------
 
 # code generation using lex and yacc
 
 echo -n "Generating code from Lex... "
-lex $LEXFLAGS $LEX_FILE
-check_error "failed!"
+$LEX $LEXFLAGS $LEX_FILE
+check_error "ERROR!"
 echo "OK!"
 
 echo -n "Generating code from Yacc... "
-yacc $YACCFLAGS $YACC_FILE
-check_error "failed!"
+$YACC $YACCFLAGS $YACC_FILE
+check_error "ERROR!"
 echo "OK!"
+echo 
 
 # ----------------------------------------------
 
 # compiling sources for tests 
 
 echo -n "Compiling lex... "
-gcc lex.yy.c -o $EXEC_LEX $CCFLAGS $CCFLAGSLEX
-check_error "LEX compilation failed!"
+$CC lex.yy.c -o $EXEC_LEX $CCFLAGS $CCFLAGSLEX
+check_error "ERROR!"
 echo "OK!"
 
 echo -n "Compiling yacc... "
-gcc lex.yy.c y.tab.c -o $EXEC_YACC $CCFLAGS $CCFLAGSYACC
-check_error "YACC compilation failed!"
+$CC lex.yy.c y.tab.c -o $EXEC_YACC $CCFLAGS $CCFLAGSYACC
+check_error "ERROR!"
 echo "OK!"
+echo
 
-rm lex.yy.c y.tab.*
+rm -f lex.yy.c y.tab.*
 mv y.output yacc.log
 
 # ----------------------------------------------
 
 # testing lex
 
-echo -n "Testing lex... "
-for FILE in $TESTLEXFD/*.in
+for FILE in $TESTFD/*.in
 do
 	F=`basename $FILE .in`
-	./$EXEC_LEX <"$TESTLEXFD/$F.in" >"$TESTLEXFD/test.out"
+	./$EXEC_LEX <"$TESTFD/$F.in" >"$TESTFD/test.out"
 
-	diff "$TESTLEXFD/test.out" "$TESTLEXFD/$F.gab"
-	check_error "failed! ($FILE)"
+	echo -n "Testing lex ($FILE)... "
+	diff "$TESTFD/test.out" "$TESTFD/$F.gab" >diff.err
+	check_error "ERROR!"
+	echo "OK!"
 
-	rm "$TESTLEXFD/test.out"
+	rm "$TESTFD/test.out"
 done
-echo "OK!"
+echo
 
-rm $EXEC_LEX
+rm -f $EXEC_LEX diff.err
 
 # ----------------------------------------------
 
-rm $EXEC_YACC
+# testing yacc
+
+for FILE in $TESTFD/*.in
+do
+	echo -n "Testing yacc ($FILE)... "
+	./$EXEC_YACC <$FILE 1>/dev/null 2>yacc.err
+	check_error "ERROR!"
+	echo "OK!"
+done
+echo
+
+rm $EXEC_YACC yacc.err
 
 # ----------------------------------------------

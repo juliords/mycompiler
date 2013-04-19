@@ -126,8 +126,10 @@ return 	return TK_RET;
 }
 
 {COMMENT} {
+#if MAINLEX
 	Info.s = yytext;
 	return TK_CMT;
+#endif
 }
 
 

@@ -1,5 +1,7 @@
 %{
 #include<stdio.h>
+
+int yydebug = 1;
 %}
 
 %start programa
@@ -30,7 +32,12 @@
 %%
 
 programa 
+	: declaracoes
+	;
+
+declaracoes
 	: declaracao
+	| declaracoes declaracao
 	;
 
 declaracao 
@@ -74,8 +81,19 @@ parametro
 	;
 
 bloco 
-	: '{' dec_variavel comando '}'
-	| '{' comando '}'
+	: '{' dec_variaveis comandos '}'
+	| '{' comandos '}'
+	| '{' /* vazio */ '}'
+	;
+
+dec_variaveis
+	: dec_variavel
+	| dec_variaveis dec_variavel
+	;
+
+comandos
+	: comando
+	| comandos comando
 	;
 
 comando 
@@ -83,7 +101,8 @@ comando
 	| TK_IF '(' exp ')' comando TK_ELSE comando
         | TK_WHILE '(' exp ')' comando
         | var '=' exp ';'
-        | TK_RET [ exp ] ';'
+        | TK_RET exp ';'
+        | TK_RET ';'
         | chamada ';'
 	| bloco
 	;
