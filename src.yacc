@@ -18,6 +18,14 @@ int yydebug = 1;
 %token TK_EQUAL TK_LEQUAL TK_GEQUAL TK_LESS TK_GREATER
 %token TK_NOT TK_AND TK_OR
 
+%union 
+{
+	int i;
+	float f;
+	char c;
+	char *s;
+};
+
 %left TK_EQUAL TK_LEQUAL TK_GEQUAL TK_LESS TK_GREATER
 %left TK_NOT TK_AND TK_OR
 %left TK_PLUS TK_MINUS

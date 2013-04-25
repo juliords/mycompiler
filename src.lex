@@ -9,13 +9,9 @@
 
 #include "y.tab.h"
 
-union 
-{
-	int i;
-	float f;
-	char c;
-	char *s;
-} Info;
+#if MAINLEX
+YYSTYPE yylval;
+#endif
 
 char* remove_wrap_char (char *s)
 {
@@ -96,19 +92,19 @@ return 	return TK_RET;
 
 
 {INTEGER} {
-	Info.i = atoi(yytext);
+	yylval.i = atoi(yytext);
 	return TK_INT_I;
 }
 
 {CHAR} {
 	convert_escaped_char(yytext);
 
-	Info.c = yytext[1];
+	yylval.c = yytext[1];
 	return TK_CHAR_I;
 }
 
 {FLOAT} {
-	Info.f = atof(yytext);
+	yylval.f = atof(yytext);
 	return TK_FLOAT_I;
 }
 
@@ -116,18 +112,18 @@ return 	return TK_RET;
 	char *s = remove_wrap_char(yytext);
 	convert_escaped_char(s);
 
-	Info.s = s;
+	yylval.s = s;
 	return TK_STR;
 }
 
 {IDENTIFIER} {
-	Info.s = yytext;
+	yylval.s = yytext;
 	return TK_ID;
 }
 
 {COMMENT} {
 #if MAINLEX
-	Info.s = yytext;
+	yylval.s = yytext;
 	return TK_CMT;
 #endif
 }
@@ -163,7 +159,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_INT_I: 
-				printf("TK_INT_I (%d)\n", Info.i); 
+				printf("TK_INT_I (%d)\n", yylval.i); 
 				break;
 
 			case TK_CHAR: 
@@ -171,7 +167,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_CHAR_I: 
-				printf("TK_CHAR_I (%c)\n", Info.c); 
+				printf("TK_CHAR_I (%c)\n", yylval.c); 
 				break;
 
 			case TK_FLOAT: 
@@ -179,7 +175,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_FLOAT_I: 
-				printf("TK_FLOAT_I (%f)\n", Info.f); 
+				printf("TK_FLOAT_I (%f)\n", yylval.f); 
 				break;
 
 			case TK_VOID:
@@ -187,7 +183,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_STR:
-				printf("TK_STR (%s)\n", Info.s);
+				printf("TK_STR (%s)\n", yylval.s);
 				break;
 
 			case TK_NEW:
@@ -195,7 +191,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_ID:
-				printf("TK_ID (%s)\n", Info.s);
+				printf("TK_ID (%s)\n", yylval.s);
 				break;
 
 			case TK_IF:
@@ -211,7 +207,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case TK_CMT:
-				printf("TK_CMT (%s)\n", Info.s);
+				printf("TK_CMT (%s)\n", yylval.s);
 				break;
 
 			case TK_RET:
