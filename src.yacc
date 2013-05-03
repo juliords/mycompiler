@@ -4,7 +4,7 @@
 
 int yydebug = 1;
 
-ProgramNode *root;
+ProgramNode *tree;
 %}
 
 %start programa
@@ -54,6 +54,12 @@ ProgramNode *root;
 %nonassoc TK_THEN
 %nonassoc TK_ELSE
 
+%type <i>		TK_INT_I
+%type <c>		TK_CHAR_I
+%type <f>		TK_FLOAT_I
+%type <s>		TK_STR
+%type <s>		TK_ID
+
 %type <programa>	programa
 %type <lista>		declaracoes
 %type <declaracao>	declaracao
@@ -76,7 +82,7 @@ ProgramNode *root;
 %%
 
 programa 
-	: declaracoes { $$ = NULL; root = $$; }
+	: declaracoes { $$ = NULL; tree = $$; }
 	;
 
 declaracoes
