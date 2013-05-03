@@ -7,6 +7,7 @@
 
 #include <limits.h>
 
+#include "tree.h"
 #include "y.tab.h"
 
 #if MAINLEX
