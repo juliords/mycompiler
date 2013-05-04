@@ -25,6 +25,35 @@ typedef struct 	ExpNode 	ExpNode;
 typedef struct 	CallNode 	CallNode;
 typedef struct 	CmdNode 	CmdNode;
 
+/* --------------------------------------------------------------------------------- */
+
+ListNode* newListNode(void *data, ListNode *next);
+
+ProgramNode* newProgramNode(ListNode *dec);
+
+DeclarationNode* newDeclarationNode(DeclarationType type, ... );
+
+DecVarNode* newDecVarNode(TypeNode *type, ListNode *name);
+
+TypeNode* newTypeNode(TypeType type, ... );
+
+DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block);
+
+ParamNode* newParamNode(TypeNode *type, char *id );
+
+BlockNode* newBlockNode(ListNode *var, ListNode *cmd );
+
+CmdNode* newCmdNode(CmdType type, ... );
+
+VarNode* newVarNode(VarType type, ... );
+
+ExpNode* newExpNode(ExpType type, ... );
+
+CallNode* newCallNode(char *id, ListNode *exp );
+
+
+/* --------------------------------------------------------------------------------- */
+
 struct ListNode
 {
 	void *data;
@@ -35,15 +64,15 @@ struct ListNode
 
 struct ProgramNode
 {
-	ListNode *programs;	
+	ListNode *dec;
 };
 
 /* --------------------------------------------------------------------------------- */
 
 enum DeclarationType
 {
-	DeclVar,
-	DeclFunc,
+	DecVar,
+	DecFunc,
 };
 
 struct DeclarationNode
@@ -64,7 +93,7 @@ struct DeclarationNode
  *   de variaveis. De modo que estas as representem, de fato.
  */
 
-struct DevVarNode
+struct DecVarNode
 {
 	TypeNode *type;
 	ListNode *name;
@@ -100,7 +129,7 @@ struct TypeNode
 
 struct DecFuncNode
 {
-	TypeType *type;
+	TypeNode *type;
 	char *id;
 	ListNode *params;
 	BlockNode *block;
@@ -110,7 +139,7 @@ struct DecFuncNode
 
 struct ParamNode
 {
-	TypeType *type;
+	TypeNode *type;
 	char *id;
 };
 
@@ -165,8 +194,7 @@ struct CmdNode
 
 		struct
 		{
-			ListNode *var;
-			ListNode *cmd;
+			BlockNode *block;
 		} b;
 
 		struct
@@ -193,21 +221,13 @@ struct VarNode
 		
 		struct
 		{
-			VarNode *next;
 			ExpNode *exp;
+			VarNode *next;
 		} rec;
 	} u;
 };
 
 /* --------------------------------------------------------------------------------- */
-
-enum PrimitiveType
-{
-	PrimInt,
-	PrimFloat,
-	PrimChar,
-	PrimStr,
-};
 
 enum ExpType
 {
@@ -217,6 +237,14 @@ enum ExpType
 	ExpUn,
 	ExpCall,
 	ExpNew,
+};
+
+enum PrimitiveType
+{
+	PrimInt,
+	PrimFloat,
+	PrimChar,
+	PrimStr,
 };
 
 enum ExpBinType

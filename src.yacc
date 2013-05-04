@@ -33,7 +33,7 @@ ProgramNode *tree;
 	DeclarationNode	*declaracao;
 	DecVarNode 	*dec_variavel;
 	TypeNode 	*tipo;
-	TypeNode 	*tipo_base;
+	BaseType 	tipo_base;
 	DecFuncNode 	*dec_funcao;
 	ParamNode	*parametro;
 	BlockNode	*bloco;
@@ -82,118 +82,118 @@ ProgramNode *tree;
 %%
 
 programa 
-	: declaracoes { $$ = NULL; tree = $$; }
+	: declaracoes { $$ = newProgramNode($1); tree = $$; }
 	;
 
 declaracoes
-	: declaracao { $$ = NULL; }
-	| declaracoes declaracao { $$ = NULL; }
+	: declaracao { $$ = newListNode($1, NULL); }
+	| declaracoes declaracao { $$ = newListNode($2, $1); }
 	;
 
 declaracao 
-	: dec_variavel { $$ = NULL; }
-	| dec_funcao { $$ = NULL; }
+	: dec_variavel { $$ = newDeclarationNode(DecVar, $1); }
+	| dec_funcao { $$ = newDeclarationNode(DecFunc, $1); }
 	;
 
 dec_variavel 
-	: tipo lista_nomes ';' { $$ = NULL; }
+	: tipo lista_nomes ';' { $$ = newDecVarNode($1, $2); }
 	;
 
 lista_nomes 
-	: TK_ID { $$ = NULL; }
-	| lista_nomes ',' TK_ID { $$ = NULL; }
+	: TK_ID { $$ = newListNode($1, NULL); }
+	| lista_nomes ',' TK_ID { $$ = newListNode($3, $1); }
 	;
 
 tipo 
-	: tipo_base { $$ = NULL; }
-	| tipo '[' ']' { $$ = NULL; }
+	: tipo_base { $$ = newTypeNode(TypeBase, (void*)$1); }
+	| tipo '[' ']' { $$ = newTypeNode(TypeRec, $1);; }
 	;
 
 tipo_base 
-	: TK_INT { $$ = NULL; } 
-	| TK_CHAR { $$ = NULL; } 
-	| TK_FLOAT { $$ = NULL; }
-	| TK_VOID { $$ = NULL; }
+	: TK_INT { $$ = TypeInt; } 
+	| TK_CHAR { $$ = TypeChar; } 
+	| TK_FLOAT { $$ = TypeFloat; }
+	| TK_VOID { $$ = TypeVoid; }
 	;
 
 dec_funcao 
-	: tipo TK_ID '(' parametros ')' bloco { $$ = NULL; }
+	: tipo TK_ID '(' parametros ')' bloco { $$ = newDecFuncNode($1, $2, $4, $6); }
 	;
 
 parametros 
 	: /* vazio */ { $$ = NULL; } 
-	| parametro { $$ = NULL; } 
-	| parametros ',' parametro { $$ = NULL; }
+	| parametro { $$ = newListNode($1, NULL); } 
+	| parametros ',' parametro { $$ = newListNode($3, $1); }
 	;
 
 parametro 
-	: tipo TK_ID { $$ = NULL; }
+	: tipo TK_ID { $$ = newParamNode($1, $2); }
 	;
 
 bloco 
-	: '{' dec_variaveis comandos '}' { $$ = NULL; }
-	| '{' comandos '}' { $$ = NULL; }
+	: '{' dec_variaveis comandos '}' { $$ = newBlockNode($2, $3); }
+	| '{' comandos '}' { $$ = newBlockNode(NULL, $2); }
 	| '{' /* vazio */ '}' { $$ = NULL; }
 	;
 
 dec_variaveis
-	: dec_variavel { $$ = NULL; }
-	| dec_variaveis dec_variavel { $$ = NULL; }
+	: dec_variavel { $$ = newListNode($1, NULL); }
+	| dec_variaveis dec_variavel { $$ = newListNode($2, $1); }
 	;
 
 comandos
-	: comando { $$ = NULL; }
-	| comandos comando { $$ = NULL; }
+	: comando { $$ = newListNode($1, NULL); }
+	| comandos comando { $$ = newListNode($2, $1); }
 	;
 
 comando 
-	: TK_IF '(' exp ')' comando %prec TK_THEN { $$ = NULL; }
-	| TK_IF '(' exp ')' comando TK_ELSE comando { $$ = NULL; }
-        | TK_WHILE '(' exp ')' comando { $$ = NULL; }
-        | var '=' exp ';' { $$ = NULL; }
-        | TK_RET exp ';' { $$ = NULL; }
-        | TK_RET ';' { $$ = NULL; }
-        | chamada ';' { $$ = NULL; }
-	| bloco { $$ = NULL; }
+	: TK_IF '(' exp ')' comando %prec TK_THEN { $$ = newCmdNode(CmdIf, $3, $5, NULL); }
+	| TK_IF '(' exp ')' comando TK_ELSE comando { $$ = newCmdNode(CmdIf, $3, $5, $7); }
+        | TK_WHILE '(' exp ')' comando { $$ = newCmdNode(CmdWhile, $3, $5); }
+        | var '=' exp ';' { $$ = newCmdNode(CmdAssig, $1, $3); }
+        | TK_RET exp ';' { $$ = newCmdNode(CmdRet, $2); }
+        | TK_RET ';' { $$ = newCmdNode(CmdRet, NULL); }
+        | chamada ';' { $$ = newCmdNode(CmdCall, $1); }
+	| bloco { $$ = newCmdNode(CmdBlock, $1); }
 	;
 
 var 
-	: TK_ID { $$ = NULL; } 
-	| var '[' exp ']' { $$ = NULL; }
+	: TK_ID { $$ = newVarNode(VarId, $1); } 
+	| var '[' exp ']' { $$ = newVarNode(VarRec, $1, $3); }
 	;
 
 exp 
-	: TK_INT_I { $$ = NULL; } 
-	| TK_FLOAT_I { $$ = NULL; } 
-	| TK_CHAR_I { $$ = NULL; } 
-	| TK_STR { $$ = NULL; } 
-	| var { $$ = NULL; }
-	| '(' exp ')' { $$ = NULL; }
-	| chamada { $$ = NULL; }
-	| TK_NEW tipo '[' exp ']' { $$ = NULL; }
-	| TK_MINUS exp %prec UNARY_MINUS { $$ = NULL; }
-	| exp TK_PLUS exp { $$ = NULL; }
-	| exp TK_MINUS exp { $$ = NULL; }
-	| exp TK_AST exp { $$ = NULL; }
-	| exp TK_SLASH exp { $$ = NULL; }
-	| exp TK_EQUAL exp { $$ = NULL; }
-	| exp TK_LEQUAL exp { $$ = NULL; }
-	| exp TK_GEQUAL exp { $$ = NULL; }
-	| exp TK_LESS exp { $$ = NULL; }
-	| exp TK_GREATER exp { $$ = NULL; }
-	| TK_NOT exp %prec UNARY_NOT { $$ = NULL; }
-	| exp TK_AND exp { $$ = NULL; }
-	| exp TK_OR exp { $$ = NULL; }
+	: TK_INT_I { $$ = newExpNode(ExpValue, PrimInt, $1); } 
+	| TK_FLOAT_I { $$ = newExpNode(ExpValue, PrimFloat, (double)$1); } 
+	| TK_CHAR_I { $$ = newExpNode(ExpValue, PrimChar, (int)$1); } 
+	| TK_STR { $$ = newExpNode(ExpValue, PrimStr, $1); } 
+	| var { $$ = newExpNode(ExpVar, $1); }
+	| '(' exp ')' { $$ = $2; }
+	| chamada { $$ = newExpNode(ExpCall, $1); }
+	| TK_NEW tipo '[' exp ']' { $$ = newExpNode(ExpNew, $2, $4); }
+	| TK_MINUS exp %prec UNARY_MINUS { $$ = newExpNode(ExpUn, ExpUnMinus, $2); }
+	| exp TK_PLUS exp { $$ = newExpNode(ExpBin, ExpBinPlus, $1, $3); }
+	| exp TK_MINUS exp { $$ = newExpNode(ExpBin, ExpBinMinus, $1, $3); }
+	| exp TK_AST exp { $$ = newExpNode(ExpBin, ExpBinMult, $1, $3); }
+	| exp TK_SLASH exp { $$ = newExpNode(ExpBin, ExpBinDiv, $1, $3); }
+	| exp TK_EQUAL exp { $$ = newExpNode(ExpBin, ExpBinEQ, $1, $3); }
+	| exp TK_LEQUAL exp { $$ = newExpNode(ExpBin, ExpBinLE, $1, $3); }
+	| exp TK_GEQUAL exp { $$ = newExpNode(ExpBin, ExpBinGE, $1, $3); }
+	| exp TK_LESS exp { $$ = newExpNode(ExpBin, ExpBinLT, $1, $3); }
+	| exp TK_GREATER exp { $$ = newExpNode(ExpBin, ExpBinGT, $1, $3); }
+	| TK_NOT exp %prec UNARY_NOT { $$ = newExpNode(ExpUn, ExpUnNot, $2); }
+	| exp TK_AND exp { $$ = newExpNode(ExpBin, ExpBinAnd, $1, $3); }
+	| exp TK_OR exp { $$ = newExpNode(ExpBin, ExpBinOr, $1, $3); }
 	;
 
 chamada 
-	: TK_ID '(' lista_exp ')' { $$ = NULL; }
+	: TK_ID '(' lista_exp ')' { $$ = newCallNode($1, $3); }
 	;
 
 lista_exp 
 	: /* vazio */ { $$ = NULL; } 
-	| exp { $$ = NULL; }
-	| lista_exp ',' exp { $$ = NULL; }
+	| exp { $$ = newListNode($1, NULL); }
+	| lista_exp ',' exp { $$ = newListNode($3, $1); }
 	;
 
 

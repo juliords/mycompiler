@@ -1,10 +1,9 @@
 
 %{
-/* Need this for the call to atof() below. */
 #include <math.h>
-/* Need this for printf(), fopen(), and stdin below. */
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 #include <limits.h>
 
 #include "tree.h"
@@ -13,6 +12,18 @@
 #if MAINLEX
 YYSTYPE yylval;
 #endif
+
+char* strcpy_malloc(char* str)
+{
+	char *s = (char*) malloc(strlen(str)+1);
+	if(!s)
+	{
+		fputs("Malloc FAILED: LEX\n", stderr);
+		exit(1);
+	}
+	strcpy(s, str);
+	return s;
+}
 
 char* remove_wrap_char (char *s)
 {
@@ -113,18 +124,18 @@ return 	return TK_RET;
 	char *s = remove_wrap_char(yytext);
 	convert_escaped_char(s);
 
-	yylval.s = s;
+	yylval.s = strcpy_malloc(s);
 	return TK_STR;
 }
 
 {IDENTIFIER} {
-	yylval.s = yytext;
+	yylval.s = strcpy_malloc(yytext);
 	return TK_ID;
 }
 
 {COMMENT} {
 #if MAINLEX
-	yylval.s = yytext;
+	yylval.s = strcpy_malloc(yytext);
 	return TK_CMT;
 #endif
 }

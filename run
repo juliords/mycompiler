@@ -68,7 +68,7 @@ check_error "ERROR!"
 echo "OK!"
 
 echo -n "Compiling yacc... "
-$CC lex.yy.c y.tab.c -o $EXEC_YACC $CCFLAGS $CCFLAGSYACC
+$CC lex.yy.c y.tab.c tree.c -o $EXEC_YACC $CCFLAGS $CCFLAGSYACC
 check_error "ERROR!"
 echo "OK!"
 echo
