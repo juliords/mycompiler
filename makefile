@@ -5,32 +5,34 @@ CC=gcc
 
 LEXFLAGS=
 YACCFLAGS=-d -v --debug
-CFLAGS=-ansi -Wall -g -O2
+CFLAGS=-ansi -O2
 LDLIBS=-lfl
+
+DEPS=yacc.h tree.h
 
 .phony: all clean
 .default: all
 
 all: clex cyacc
 
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
 lex.c: src.lex yacc.h
 	$(LEX) -t $< > $@
 
-yacc.%: src.yacc
+yacc.c yacc.h: src.yacc
 	$(YACC) $(YACCFLAGS) $<
-	mv y.tab.c $(@:.h=.c)
-	mv y.tab.h $(@:.c=.h)
+	mv y.tab.c yacc.c
+	mv y.tab.h yacc.h
 	mv y.output yacc.log
 
-clex: main.lex.c lex.c tree.c
-	$(CC) main.lex.c lex.c tree.c -o $@ $(LDLIBS)
+clex: main.lex.o lex.o tree.o
+	$(CC) -o $@ $^ $(LDLIBS)
 
-cyacc: main.yacc.c yacc.c lex.c tree.c 
-	$(CC) main.yacc.c yacc.c lex.c tree.c -o $@ $(LDLIBS)
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+cyacc: main.yacc.o yacc.o lex.o tree.o 
+	$(CC) -o $@ $^ $(LDLIBS)
 
 clean:
-	rm -f clex cyacc lex.* yacc.*
+	rm -f clex cyacc lex.* yacc.* *.o
 

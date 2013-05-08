@@ -4,6 +4,7 @@
 
 YYSTYPE yylval;
 extern FILE *yyin;
+int yylex();
 
 int main(int argc, char *argv[])
 {
