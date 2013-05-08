@@ -36,6 +36,7 @@ echo
 make
 check_error "ERROR!"
 echo 
+
 # ----------------------------------------------
 
 # testing lex
@@ -43,18 +44,18 @@ echo
 for FILE in $TESTFD/*.in
 do
 	F=`basename $FILE .in`
-	./$EXEC_LEX <"$TESTFD/$F.in" >"$TESTFD/test.out"
+	./$EXEC_LEX <"$FILE" >"$TESTFD/test.lex.out"
 
 	echo -n "Testing lex ($FILE)... "
-	diff "$TESTFD/test.out" "$TESTFD/$F.gab" >diff.err
+	diff "$TESTFD/test.lex.out" "$TESTFD/$F.gab" >diff.err
 	check_error "ERROR!"
 	echo "OK!"
 
-	rm "$TESTFD/test.out"
+	rm "$TESTFD/test.lex.out"
 done
 echo
 
-rm -f diff.err
+rm -f diff.err "$TESTFD/test.lex.out"
 
 # ----------------------------------------------
 
@@ -63,13 +64,13 @@ rm -f diff.err
 for FILE in $TESTFD/*.in
 do
 	echo -n "Testing yacc ($FILE)... "
-	./$EXEC_YACC <$FILE 1>/dev/null 2>yacc.err
+	./$EXEC_YACC <$FILE 1>"$TESTFD/test.yacc.out" 2>yacc.err
 	check_error "ERROR!"
 	echo "OK!"
 done
 echo
 
-rm yacc.err
+rm -f yacc.err "$TESTFD/test.yacc.out"
 
 # ----------------------------------------------
 

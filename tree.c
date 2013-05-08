@@ -320,7 +320,6 @@ void printTabs(int i)
 	{
 		printf("\t");
 	}
-	
 }
 
 void printProgramNode(ProgramNode* p)
@@ -594,7 +593,7 @@ void printExpNode(ExpNode* p)
 				{
 					char *s;
 					printf("\"");
-					for(s =  p->u.prim.u.s; *s; s++)
+					for(s = p->u.prim.u.s; *s; s++)
 					{
 						switch(*s)
 						{
@@ -682,5 +681,235 @@ void printCallNode(CallNode *p)
 	}
 
 	printf(")");
+}
+
+
+/* ------------------------------------------------------ */
+
+void freeProgramNode(ProgramNode* p)
+{
+	ListNode* l, *next;
+
+	if(!p) return;
+
+	for(l = p->dec; l; l = next)
+	{
+		freeDeclarationNode((DeclarationNode*)l->data);
+
+		next = l->next;
+		free(l);
+	}
+	free(p);
+}
+
+void freeDeclarationNode(DeclarationNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case DecVar:
+			freeDecVarNode(p->u.var);
+			break;
+		case DecFunc:
+			freeDecFuncNode(p->u.func);
+			break;
+	}
+
+	free(p);
+}
+
+void freeDecVarNode(DecVarNode* p)
+{
+	ListNode* l, *next;
+
+	if(!p) return;
+
+	freeTypeNode(p->type);
+
+	for(l = p->name; l; l = next)
+	{
+		free(l->data);
+
+		next = l->next;
+		free(l);
+	}
+	free(p);
+}
+
+void freeTypeNode(TypeNode* p)
+{
+	if(!p) return;
+
+	if(p->type == TypeRec)
+	{
+		freeTypeNode(p->u.next);
+	}
+	free(p);
+}
+
+void freeDecFuncNode(DecFuncNode* p)
+{
+	ListNode *l, *next;
+
+	if(!p) return;
+
+	freeTypeNode(p->type);
+	free(p->id);
+
+	for(l = p->params; l; l = next)
+	{
+		freeParamNode((ParamNode*)l->data);
+
+		next = l->next;
+		free(l);
+	}
+
+	freeBlockNode(p->block);
+	free(p);
+}
+
+void freeParamNode(ParamNode* p)
+{
+	if(!p) return;
+
+	free(p->id);
+	freeTypeNode(p->type);
+	free(p);
+}
+
+void freeBlockNode(BlockNode* p)
+{
+	ListNode* l, *next;
+
+	if(!p) return;
+
+	for(l = p->var; l; l = next)
+	{
+		freeDecVarNode((DecVarNode*)l->data);
+
+		next = l->next;
+		free(l);
+	}
+
+	for(l = p->cmd; l; l = next)
+	{
+		freeCmdNode((CmdNode*)l->data);
+
+		next = l->next;
+		free(l);
+	}
+
+	free(p);
+}
+
+void freeCmdNode(CmdNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case CmdIf:
+			freeExpNode(p->u.i.cond);
+			freeCmdNode(p->u.i.cmd_if);
+			freeCmdNode(p->u.i.cmd_else);
+			break;
+
+		case CmdWhile:
+			freeExpNode(p->u.w.cond);
+			freeCmdNode(p->u.w.cmd);
+			break;
+
+		case CmdAssig:
+			freeVarNode(p->u.a.var);
+			freeExpNode(p->u.a.exp);
+			break;
+
+		case CmdRet:
+			freeExpNode(p->u.r.exp);
+			break;
+
+		case CmdCall: 
+			freeCallNode(p->u.c.call);
+			break;
+
+		case CmdBlock:
+			freeBlockNode(p->u.b.block);
+			break;
+	}
+	free(p);
+}
+
+void freeVarNode(VarNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case VarId:
+			free(p->u.id);
+			break;
+		case VarRec:
+			freeVarNode(p->u.rec.next);
+			freeExpNode(p->u.rec.exp);
+			break;
+	}
+	free(p);
+}
+
+void freeExpNode(ExpNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case ExpVar:
+			freeVarNode(p->u.var.var);
+			break;
+
+		case ExpValue:
+			if(p->u.prim.type == PrimStr)
+			{
+				free(p->u.prim.u.s);
+			}
+			break;
+
+		case ExpBin:
+			freeExpNode(p->u.bin.left);
+			freeExpNode(p->u.bin.right);
+			break;
+
+		case ExpUn:
+			freeExpNode(p->u.un.exp);
+			break;
+
+		case ExpCall:
+			freeCallNode(p->u.call.call); 
+			break;
+
+		case ExpNew:
+			freeTypeNode(p->u.enew.type);
+			freeExpNode(p->u.enew.exp);
+			break;
+	}
+	free(p);
+}
+
+void freeCallNode(CallNode *p)
+{
+	ListNode *l, *next;
+
+	if(!p) return;
+
+	free(p->id);
+
+	for(l = p->exp; l; l = next)
+	{
+		freeExpNode((ExpNode*)l->data);
+
+		next = l->next;
+		free(l);
+	}
+	free(p);
 }
 

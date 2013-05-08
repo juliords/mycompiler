@@ -66,6 +66,19 @@ void printVarNode(VarNode* p);
 void printExpNode(ExpNode* p);
 void printCallNode(CallNode* p);
 
+void freeProgramNode(ProgramNode* p);
+void freeDeclarationNode(DeclarationNode* p);
+void freeDecVarNode(DecVarNode* p);
+void freeTypeNode(TypeNode* p);
+void freeDecFuncNode(DecFuncNode* p);
+void freeParamNode(ParamNode* p);
+void freeBlockNode(BlockNode* p);
+void freeTypeNode(TypeNode* p);
+void freeCmdNode(CmdNode* p);
+void freeVarNode(VarNode* p);
+void freeExpNode(ExpNode* p);
+void freeCallNode(CallNode* p);
+
 
 /* --------------------------------------------------------------------------------- */
 

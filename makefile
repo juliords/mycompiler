@@ -14,7 +14,7 @@ LDLIBS=-lfl
 all: clex cyacc
 
 lex.c: src.lex yacc.h
-	$(LEX) -t src.lex > $@
+	$(LEX) -t $< > $@
 
 yacc.%: src.yacc
 	$(YACC) $(YACCFLAGS) $<

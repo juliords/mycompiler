@@ -14,6 +14,7 @@ int main()
 	int ret = yyparse();	
 
 	printProgramNode(tree);
+	freeProgramNode(tree);
 
 	return ret;
 }
