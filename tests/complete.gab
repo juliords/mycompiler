@@ -10,7 +10,6 @@ TK_ID (i)
 OTHER: =
 TK_INT_I (100)
 OTHER: ;
-TK_CMT (/* apenas mais um programa de teste */)
 TK_WHILE
 OTHER: (
 TK_ID (i)

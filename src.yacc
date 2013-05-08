@@ -13,7 +13,7 @@ ProgramNode *tree;
 %token TK_INT_I TK_CHAR_I TK_FLOAT_I
 %token TK_VOID TK_STR TK_NEW
 
-%token TK_ID TK_CMT
+%token TK_ID
 %token TK_IF TK_ELSE TK_WHILE
 %token TK_RET
 
@@ -199,21 +199,3 @@ lista_exp
 
 %%
 
-
-int yyerror(char *s)
-{
-	printf("%s\n", s);
-}
-
-#if MAINYACC
-
-int main()
-{
-	int ret = yyparse();	
-
-	printProgramNode(tree);
-
-	return ret;
-}
-
-#endif

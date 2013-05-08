@@ -16,24 +16,10 @@ function check_error {
 
 # variable declaration area
 
-CC=gcc
-LEX=lex
-YACC=yacc
-
-LEX_FILE=src.lex
-YACC_FILE=src.yacc
-
-LEXFLAGS=""
-YACCFLAGS="-d -v --debug"
-
-CCFLAGS="-ansi -O2 -lfl -g"
-CCFLAGSLEX="-DMAINLEX"
-CCFLAGSYACC="-DMAINYACC"
+TESTFD=./tests
 
 EXEC_LEX=clex
 EXEC_YACC=cyacc
-
-TESTFD=./tests
 
 # ----------------------------------------------
 
@@ -45,37 +31,11 @@ echo
 
 # ----------------------------------------------
 
-# code generation using lex and yacc
-
-echo -n "Generating code from Lex... "
-$LEX $LEXFLAGS $LEX_FILE
-check_error "ERROR!"
-echo "OK!"
-
-echo -n "Generating code from Yacc... "
-$YACC $YACCFLAGS $YACC_FILE
-check_error "ERROR!"
-echo "OK!"
-echo 
-
-# ----------------------------------------------
-
 # compiling sources for tests 
 
-echo -n "Compiling lex... "
-$CC lex.yy.c -o $EXEC_LEX $CCFLAGS $CCFLAGSLEX
+make
 check_error "ERROR!"
-echo "OK!"
-
-echo -n "Compiling yacc... "
-$CC lex.yy.c y.tab.c tree.c -o $EXEC_YACC $CCFLAGS $CCFLAGSYACC
-check_error "ERROR!"
-echo "OK!"
-echo
-
-rm -f lex.yy.c y.tab.*
-mv y.output yacc.log
-
+echo 
 # ----------------------------------------------
 
 # testing lex
@@ -94,7 +54,7 @@ do
 done
 echo
 
-rm -f $EXEC_LEX diff.err
+rm -f diff.err
 
 # ----------------------------------------------
 
@@ -109,6 +69,7 @@ do
 done
 echo
 
-rm $EXEC_YACC yacc.err
+rm yacc.err
 
 # ----------------------------------------------
+
