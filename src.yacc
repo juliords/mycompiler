@@ -209,7 +209,11 @@ int yyerror(char *s)
 
 int main()
 {
-	return yyparse();	
+	int ret = yyparse();	
+
+	printProgramNode(tree);
+
+	return ret;
 }
 
 #endif

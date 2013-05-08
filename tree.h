@@ -19,7 +19,6 @@ typedef struct 	TypeNode	TypeNode;
 typedef struct 	DecFuncNode	DecFuncNode;
 typedef struct 	ParamNode	ParamNode;
 typedef struct 	BlockNode	BlockNode;
-typedef struct 	TypeNode 	TypeNode;
 typedef struct 	VarNode 	VarNode;
 typedef struct 	ExpNode 	ExpNode;
 typedef struct 	CallNode 	CallNode;
@@ -54,10 +53,27 @@ CallNode* newCallNode(char *id, ListNode *exp );
 
 /* --------------------------------------------------------------------------------- */
 
+void printProgramNode(ProgramNode* p);
+void printDeclarationNode(DeclarationNode* p);
+void printDecVarNode(DecVarNode* p);
+void printTypeNode(TypeNode* p);
+void printDecFuncNode(DecFuncNode* p);
+void printParamNode(ParamNode* p);
+void printBlockNode(BlockNode* p);
+void printTypeNode(TypeNode* p);
+void printCmdNode(CmdNode* p);
+void printVarNode(VarNode* p);
+void printExpNode(ExpNode* p);
+void printCallNode(CallNode* p);
+
+
+/* --------------------------------------------------------------------------------- */
+
 struct ListNode
 {
 	void *data;
 	ListNode *next;
+	ListNode *last;
 };
 
 /* --------------------------------------------------------------------------------- */

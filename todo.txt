@@ -1,0 +1,17 @@
+
+- Fazer checagem de tipos. Aproveitando para determinar se variaveis são
+  globais ou não.
+
+- Fazer cada variavel apontar para a declaracao do tipo correspondente. O
+  mesmo vale para funções.
+
+- Tentar otimizar contas feitas com constantes.
+
+- Usar "or", para otimizar codigo assembly
+
+- Implementar curto circuito em operações logicas
+
+- Melhorar testes (var global, ...)
+
+- Pre-calcular quantidade de dimensoes dos tipos
+
