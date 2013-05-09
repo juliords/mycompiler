@@ -3,8 +3,9 @@
 #include "yacc.h"
 
 extern ProgramNode *tree;
+int yyparse();
 
-int yyerror(char *s)
+void yyerror(char *s)
 {
 	printf("%s\n", s);
 }

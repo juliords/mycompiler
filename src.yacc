@@ -4,6 +4,9 @@
 
 int yydebug = 1;
 
+void yyerror(char *);
+int yylex();
+
 ProgramNode *tree;
 %}
 

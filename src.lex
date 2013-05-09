@@ -9,6 +9,8 @@
 #include "tree.h"
 #include "yacc.h"
 
+int fileno(FILE*);
+
 char* strcpy_malloc(char* str)
 {
 	char *s = (char*) malloc(strlen(str)+1);

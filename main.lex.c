@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 		yyin = stdin;
 
 
-	while( tk = yylex() )
+	while( (tk = yylex()) )
 	{
 		switch(tk)
 		{
@@ -134,6 +134,8 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
+
+	return 0;
 }
 
 
