@@ -1,15 +1,33 @@
 
+float f;
+
+int printc(char s)
+{
+	/* print char */
+}
+
 int main ()
 {
 	int i;
-	i = 100;
+	char[] s;
+	s = "Hello World \"#%d\"";
+	f = 1.23e4;
 
-	while(i >= 0)
+	i = -1;
+	while(i < s[i+1])
 	{
-		printf("Hello World \"#%d\"", i);
+		if( f <= 10 )
+		{
+			printf(s, i);
+		}
+		else
+		{
+			printc('\n');
+		}
 
 		i = i - 1;
 	}
 
 	return 0;
 }
+

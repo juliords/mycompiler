@@ -15,4 +15,5 @@
 
 - Pre-calcular quantidade de dimensoes dos tipos
 
+- implementar estrutura de pilha e hash 
 
