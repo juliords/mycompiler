@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "tree.h"
 
-int yydebug = 1;
+int yydebug = 0;
 
 void yyerror(char *);
 int yylex();

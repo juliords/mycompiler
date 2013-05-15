@@ -7,7 +7,7 @@ YACCFLAGS=-d -v --debug
 CFLAGS=-ansi -Wall -O2 -Wno-unused-function
 LDLIBS=-lfl
 
-DEPS=yacc.h tree.h tree_print.h tree_optimize.h
+DEPS=yacc.h tree.h tree_print.h 
 
 .phony: all clean
 .default: all
@@ -26,7 +26,7 @@ yacc.c yacc.h: src.yacc
 clex: main.lex.o lex.o
 	$(CC) -o $@ $^ $(LDLIBS)
 
-cyacc: main.yacc.o yacc.o lex.o tree.o tree_print.o tree_optimize.o
+cyacc: main.yacc.o yacc.o lex.o tree.o tree_print.o
 	$(CC) -o $@ $^ $(LDLIBS)
 
 %.o: %.c $(DEPS)

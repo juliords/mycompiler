@@ -10,12 +10,8 @@ int main(int argc, char *argv[])
 {
 	int tk;
 
-	++argv, --argc;
-	if (argc > 0)
-		yyin = fopen(argv[0], "r");
-	else
-		yyin = stdin;
-
+	if (argc < 2) yyin = stdin;
+	else yyin = fopen(argv[1], "r");
 
 	while( (tk = yylex()) )
 	{

@@ -4,12 +4,9 @@
 #include <stdarg.h>
 #include "tree.h"
 
-extern ListNode *exp_lst;
-extern ListNode *cmd_lst;
-
 ListNode* newListNode(void *data, ListNode *list)
 {
-	ListNode *p = (ListNode*) malloc(sizeof(ListNode)), *l;
+	ListNode *p = (ListNode*) malloc(sizeof(ListNode));
 	if(!p)
 	{
 		fputs("Malloc FAILED: newListNode\n", stderr);
@@ -18,12 +15,12 @@ ListNode* newListNode(void *data, ListNode *list)
 
 	p->data = data;
 	p->next = NULL;
+	p->last = p;
 
 	if(list)
 	{
-		for(l = list; l->next; l = l->next); 
-
-		l->next = p;
+		list->last->next = p;
+		list->last = p;
 		return list;
 	}
 	else
@@ -182,15 +179,11 @@ CmdNode* newCmdNode(CmdType type, ... )
 			p->u.i.cond = va_arg(args, ExpNode*);
 			p->u.i.cmd_if = va_arg(args, CmdNode*);
 			p->u.i.cmd_else = va_arg(args, CmdNode*);
-
-			cmd_lst = newListNode(p, cmd_lst);
 			break;
 
 		case CmdWhile:
 			p->u.w.cond = va_arg(args, ExpNode*);
 			p->u.w.cmd = va_arg(args, CmdNode*);
-
-			cmd_lst = newListNode(p, cmd_lst);
 			break;
 
 		case CmdAssig:
@@ -284,14 +277,10 @@ ExpNode* newExpNode(ExpType type, ... )
 			p->u.bin.type = va_arg(args, ExpBinType);
 			p->u.bin.left = va_arg(args, ExpNode*);
 			p->u.bin.right = va_arg(args, ExpNode*);
-
-			exp_lst = newListNode(p, exp_lst);
 			break;
 		case ExpUn:
 			p->u.un.type = va_arg(args, ExpUnType);
 			p->u.un.exp = va_arg(args, ExpNode*);
-
-			exp_lst = newListNode(p, exp_lst);
 			break;
 		case ExpCall:
 			p->u.call.call = va_arg(args, CallNode*);

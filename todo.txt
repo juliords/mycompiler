@@ -20,14 +20,6 @@
 
 ----------------------------------------------
 
-Otimizações:
-
-Expressoes binarias com constantes
-Expressao unaria "menos"
-Operador logico sempre verdadeiro ou sempre falso
-Condicionais sempre verdadeiras ou sempre falsas
-
-
 Gerar informações:
 
 Quantidade de vezes que variavel eh lida/escrita
