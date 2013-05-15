@@ -17,3 +17,22 @@
 
 - implementar estrutura de pilha e hash 
 
+
+----------------------------------------------
+
+Otimizações:
+
+Expressoes binarias com constantes
+Expressao unaria "menos"
+Operador logico sempre verdadeiro ou sempre falso
+Condicionais sempre verdadeiras ou sempre falsas
+
+
+Gerar informações:
+
+Quantidade de vezes que variavel eh lida/escrita
+Quantidade de vezes que funcao eh chamada
+Quantidade de elementos das listas
+Dizer se variavel eh estatica, global ou local (automatica)
+
+
