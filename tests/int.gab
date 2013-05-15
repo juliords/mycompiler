@@ -12,10 +12,10 @@ TK_INT_I (10)
 OTHER: ;
 TK_ID (i)
 OTHER: =
-TK_INT_I (0)
+TK_INT_I (16)
 OTHER: ;
 TK_ID (i)
 OTHER: =
-TK_INT_I (10)
+TK_INT_I (8)
 OTHER: ;
 OTHER: }

@@ -102,7 +102,7 @@ return 	return TK_RET;
 
 
 {INTEGER} {
-	yylval.i = atoi(yytext);
+	yylval.i = strtol(yytext, NULL, 0);
 	return TK_INT_I;
 }
 
