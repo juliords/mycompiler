@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "tree.h"
-#include "tree_print.h"
+#include "tree.print.h"
 #include "yacc.h"
 
 extern FILE *yyin;

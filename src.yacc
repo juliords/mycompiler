@@ -108,7 +108,7 @@ lista_nomes
 	;
 
 tipo 
-	: tipo_base { $$ = newTypeNode(TypeBase, (void*)$1); }
+	: tipo_base { $$ = newTypeNode(TypeBase, $1); }
 	| tipo '[' ']' { $$ = newTypeNode(TypeRec, $1);; }
 	;
 

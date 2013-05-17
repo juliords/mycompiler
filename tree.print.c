@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include "tree.h"
-#include "tree_print.h"
+#include "tree.print.h"
 
 static int num_tabs = 0;
 

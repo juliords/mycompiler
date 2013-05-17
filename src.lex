@@ -65,13 +65,12 @@ void convert_escaped_char (char *s)
 %}
 
 
-ESCAPE          ['"a-zA-Z]
 IDENTIFIER	[_a-zA-Z][a-zA-Z0-9]*
 COMMENT		"/*"([^*]|"\n"|"*"[^/])*"*"*"*/"
 INTEGER		"0"[0-7]*|"0"[xX][0-9A-Fa-f]+|[1-9][0-9]*
-CHAR		"'"([^']?|\\{ESCAPE})"'"
-FLOAT		[0-9]*"."[0-9]+([eE][-+]?[0-9]+)?[f]?
-STRING		\"([^\\"]|\\{ESCAPE})*\"
+CHAR		"'"([^']?|\\.)"'"
+FLOAT		[0-9]+"."[0-9]+([eE][-+]?[0-9]+)?[f]?
+STRING		\"([^\\"]|\\.)*\"
 
 
 %%
