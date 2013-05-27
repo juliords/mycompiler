@@ -9,7 +9,7 @@ void printTabs(int i)
 {
 	while(i--)
 	{
-		printf("\t");
+		print_space("\t");
 	}
 }
 
@@ -22,6 +22,7 @@ void printProgramNode(ProgramNode* p)
 	for(ln = p->dec; ln; ln = ln->next)
 	{
 		printDeclarationNode((DeclarationNode*)ln->data);
+		print_space("\n");
 	}
 }
 
@@ -33,11 +34,11 @@ void printDeclarationNode(DeclarationNode* p)
 	{
 		case DecVar:
 			printDecVarNode(p->u.var);
-			printf("\n");
+			print_space("\n");
 			break;
 		case DecFunc:
 			printDecFuncNode(p->u.func);
-			printf("\n");
+			print_space("\n");
 			break;
 	}
 }
@@ -54,10 +55,14 @@ void printDecVarNode(DecVarNode* p)
 
 	for(l = p->name; l; l = l->next)
 	{
-		if(l != p->name) printf(", ");
+		if(l != p->name) 
+		{
+			printf(",");
+			print_space(" ");
+		}
 		printf("%s", (char*)l->data);
 	}
-	printf(";\n");
+	printf(";");
 }
 
 void printTypeNode(TypeNode* p)
@@ -106,7 +111,11 @@ void printDecFuncNode(DecFuncNode* p)
 
 	for(l = p->params; l; l = l->next)
 	{
-		if(l != p->params) printf(", ");
+		if(l != p->params) 
+		{
+			printf(",");
+			print_space(" ");
+		}
 		printParamNode((ParamNode*)l->data);
 	}
 	printf(")");
@@ -128,25 +137,28 @@ void printBlockNode(BlockNode* p)
 {
 	ListNode* l;
 
-	printf("\n");
+	print_space("\n");
 	printTabs(num_tabs-1);
-	printf("{\n");
+	printf("{");
+	print_space("\n");
 
 	if(p)
 	{
 		for(l = p->var; l; l = l->next)
 		{
 			printDecVarNode((DecVarNode*)l->data);
+			print_space("\n");
 		}
 
 		for(l = p->cmd; l; l = l->next)
 		{
 			printCmdNode((CmdNode*)l->data);
+			print_space("\n");
 		}
 	}
 
 	printTabs(num_tabs-1);
-	printf("}\n");
+	printf("}");
 }
 
 void printCmdNode(CmdNode* p)
@@ -157,9 +169,11 @@ void printCmdNode(CmdNode* p)
 	{
 		case CmdIf:
 			printTabs(num_tabs);
-			printf("if( ");
+			printf("if(");
+			print_space(" ");
 			printExpNode(p->u.i.cond);
-			printf(" )");
+			print_space(" ");
+			printf(")");
 
 			num_tabs++;
 			printCmdNode(p->u.i.cmd_if);
@@ -167,6 +181,7 @@ void printCmdNode(CmdNode* p)
 
 			if(p->u.i.cmd_else)
 			{
+				print_space("\n");
 				printTabs(num_tabs);
 				printf("else");
 
@@ -174,41 +189,46 @@ void printCmdNode(CmdNode* p)
 				printCmdNode(p->u.i.cmd_else);
 				num_tabs--;
 			}
-			printf("\n");
 			break;
 
 		case CmdWhile:
 			printTabs(num_tabs);
-			printf("while( ");
+			printf("while(");
+			print_space(" ");
 			printExpNode(p->u.w.cond);
-			printf(" )");
+			print_space(" ");
+			printf(")");
 
 			num_tabs++;
 			printCmdNode(p->u.w.cmd);
 			num_tabs--;
-
-			printf("\n");
 			break;
 
 		case CmdAssig:
 			printTabs(num_tabs);
 			printVarNode(p->u.a.var);
-			printf(" = ");
+			print_space(" ");
+			printf("=");
+			print_space(" ");
 			printExpNode(p->u.a.exp);
-			printf(";\n");
+			printf(";");
 			break;
 
 		case CmdRet:
 			printTabs(num_tabs);
-			printf("return ");
-			printExpNode(p->u.r.exp);
-			printf(";\n");
+			printf("return");
+			if(p->u.r.exp)
+			{
+				printf(" ");
+				printExpNode(p->u.r.exp);
+			}
+			printf(";");
 			break;
 
 		case CmdCall: 
 			printTabs(num_tabs);
 			printCallNode(p->u.c.call);
-			printf(";\n");
+			printf(";");
 			break;
 
 		case CmdBlock:
@@ -315,20 +335,22 @@ void printExpNode(ExpNode* p)
 			printf("(");
 			printExpNode(p->u.bin.left);
 
+			print_space(" ");
 			switch(p->u.bin.type)
 			{
-				case ExpBinPlus: printf(" + "); break;
-				case ExpBinMinus: printf(" - "); break;
-				case ExpBinMult: printf(" * "); break;
-				case ExpBinDiv: printf(" / "); break;
-				case ExpBinEQ: printf(" == "); break;
-				case ExpBinLE: printf(" <= "); break;
-				case ExpBinGE: printf(" >= "); break;
-				case ExpBinLT: printf(" < "); break;
-				case ExpBinGT: printf(" > "); break;
-				case ExpBinAnd: printf(" && "); break;
-				case ExpBinOr: printf(" || "); break;
+				case ExpBinPlus: printf("+"); break;
+				case ExpBinMinus: printf("-"); break;
+				case ExpBinMult: printf("*"); break;
+				case ExpBinDiv: printf("/"); break;
+				case ExpBinEQ: printf("=="); break;
+				case ExpBinLE: printf("<="); break;
+				case ExpBinGE: printf(">="); break;
+				case ExpBinLT: printf("<"); break;
+				case ExpBinGT: printf(">"); break;
+				case ExpBinAnd: printf("&&"); break;
+				case ExpBinOr: printf("||"); break;
 			}
+			print_space(" ");
 
 			printExpNode(p->u.bin.right);
 			printf(")");
@@ -367,7 +389,11 @@ void printCallNode(CallNode *p)
 
 	for(l = p->exp; l; l = l->next)
 	{
-		if(l != p->exp) printf(", ");
+		if(l != p->exp) 
+		{
+			printf(",");
+			print_space(" ");
+		}
 		printExpNode((ExpNode*)l->data);
 	}
 

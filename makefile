@@ -7,7 +7,7 @@ YACCFLAGS=-d -v --debug
 CFLAGS=-ansi -Wall -O2 -Wno-unused-function
 LDLIBS=-lfl
 
-DEPS=yacc.h tree.h tree.print.h 
+DEPS=yacc.h tree.h tree.print.h macro.h 
 
 .phony: all clean
 .default: all

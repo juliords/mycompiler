@@ -3,15 +3,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "tree.h"
+#include "macro.h"
 
 ListNode* newListNode(void *data, ListNode *list)
 {
-	ListNode *p = (ListNode*) malloc(sizeof(ListNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newListNode\n", stderr);
-		exit(1);
-	}
+	NEW(ListNode, p);
 
 	p->data = data;
 	p->next = NULL;
@@ -31,12 +27,7 @@ ListNode* newListNode(void *data, ListNode *list)
 
 ProgramNode* newProgramNode(ListNode *dec)
 {
-	ProgramNode *p = (ProgramNode*) malloc(sizeof(ProgramNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newProgramNode\n", stderr);
-		exit(1);
-	}
+	NEW(ProgramNode, p);
 
 	p->dec = dec;
 
@@ -46,12 +37,7 @@ ProgramNode* newProgramNode(ListNode *dec)
 DeclarationNode* newDeclarationNode(DeclarationType type, ... )
 {
 	va_list args;
-	DeclarationNode *p = (DeclarationNode*) malloc(sizeof(DeclarationNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newDeclarationNode\n", stderr);
-		exit(1);
-	}
+	NEW(DeclarationNode, p);
 
 	p->type = type;
 
@@ -72,12 +58,7 @@ DeclarationNode* newDeclarationNode(DeclarationType type, ... )
 
 DecVarNode* newDecVarNode(TypeNode *type, ListNode *name)
 {
-	DecVarNode *p = (DecVarNode*) malloc(sizeof(DecVarNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newDecVarNode\n", stderr);
-		exit(1);
-	}
+	NEW(DecVarNode, p);
 	
 	p->type = type;
 	p->name = name;
@@ -88,12 +69,7 @@ DecVarNode* newDecVarNode(TypeNode *type, ListNode *name)
 TypeNode* newTypeNode(TypeType type, ... )
 {
 	va_list args;
-	TypeNode *p = (TypeNode*) malloc(sizeof(TypeNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newTypeNode\n", stderr);
-		exit(1);
-	}
+	NEW(TypeNode, p);
 	
 	p->type = type;
 
@@ -115,12 +91,7 @@ TypeNode* newTypeNode(TypeType type, ... )
 
 DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block)
 {
-	DecFuncNode *p = (DecFuncNode*) malloc(sizeof(DecFuncNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newDecFuncNode\n", stderr);
-		exit(1);
-	}
+	NEW(DecFuncNode, p);
 	
 	p->type = type;
 	p->id = id;
@@ -132,12 +103,7 @@ DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNod
 
 ParamNode* newParamNode(TypeNode *type, char *id )
 {
-	ParamNode *p = (ParamNode*) malloc(sizeof(ParamNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newParamNode\n", stderr);
-		exit(1);
-	}
+	NEW(ParamNode, p);
 	
 	p->type = type;
 	p->id = id;
@@ -147,12 +113,7 @@ ParamNode* newParamNode(TypeNode *type, char *id )
 
 BlockNode* newBlockNode(ListNode *var, ListNode *cmd )
 {
-	BlockNode *p = (BlockNode*) malloc(sizeof(BlockNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newBlockNode\n", stderr);
-		exit(1);
-	}
+	NEW(BlockNode, p);
 	
 	p->var = var;
 	p->cmd = cmd;
@@ -163,12 +124,7 @@ BlockNode* newBlockNode(ListNode *var, ListNode *cmd )
 CmdNode* newCmdNode(CmdType type, ... )
 {
 	va_list args;
-	CmdNode *p = (CmdNode*) malloc(sizeof(CmdNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newCmdNode\n", stderr);
-		exit(1);
-	}
+	NEW(CmdNode, p);
 	
 	p->type = type;
 
@@ -211,12 +167,7 @@ CmdNode* newCmdNode(CmdType type, ... )
 VarNode* newVarNode(VarType type, ... )
 {
 	va_list args;
-	VarNode *p = (VarNode*) malloc(sizeof(VarNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newVarNode\n", stderr);
-		exit(1);
-	}
+	NEW(VarNode, p);
 
 	p->type = type;
 
@@ -240,12 +191,7 @@ VarNode* newVarNode(VarType type, ... )
 ExpNode* newExpNode(ExpType type, ... )
 {
 	va_list args;
-	ExpNode *p = (ExpNode*) malloc(sizeof(ExpNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newExpNode\n", stderr);
-		exit(1);
-	}
+	NEW(ExpNode, p);
 	
 	p->type = type;
 	va_start(args, type);
@@ -297,12 +243,7 @@ ExpNode* newExpNode(ExpType type, ... )
 
 CallNode* newCallNode(char *id, ListNode *exp )
 {
-	CallNode *p = (CallNode*) malloc(sizeof(CallNode));
-	if(!p)
-	{
-		fputs("Malloc FAILED: newCallNode\n", stderr);
-		exit(1);
-	}
+	NEW(CallNode, p);
 	
 	p->id = id;
 	p->exp = exp;
