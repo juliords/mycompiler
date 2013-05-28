@@ -56,6 +56,16 @@ DeclarationNode* newDeclarationNode(DeclarationType type, ... )
 	return p;
 }
 
+DeclarationNode* newDeclarationNodeTypeDecVar(DecVarNode* var)
+{
+	NEW(DeclarationNode, p);
+
+	p->type = DecVar;
+	p->var = var;
+
+	return p;
+}
+
 DecVarNode* newDecVarNode(TypeNode *type, ListNode *name)
 {
 	NEW(DecVarNode, p);
