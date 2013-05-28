@@ -94,8 +94,8 @@ declaracoes
 	;
 
 declaracao 
-	: dec_variavel { $$ = newDeclarationNode(DecVar, $1); }
-	| dec_funcao { $$ = newDeclarationNode(DecFunc, $1); }
+	: dec_variavel { $$ = newDeclarationNodeTypeDecVar($1); }
+	| dec_funcao { $$ = newDeclarationNodeTypeDecFunc($1); }
 	;
 
 dec_variavel 
@@ -108,8 +108,8 @@ lista_nomes
 	;
 
 tipo 
-	: tipo_base { $$ = newTypeNode(TypePrim, $1); }
-	| tipo '[' ']' { $$ = newTypeNode(TypeArray, $1);; }
+	: tipo_base { $$ = newTypeNodeTypePrim($1); }
+	| tipo '[' ']' { $$ = newTypeNodeTypeArray($1); }
 	;
 
 tipo_base 
@@ -150,43 +150,43 @@ comandos
 	;
 
 comando 
-	: TK_IF '(' exp ')' comando %prec TK_THEN { $$ = newCmdNode(CmdIf, $3, $5, NULL); }
-	| TK_IF '(' exp ')' comando TK_ELSE comando { $$ = newCmdNode(CmdIf, $3, $5, $7); }
-        | TK_WHILE '(' exp ')' comando { $$ = newCmdNode(CmdWhile, $3, $5); }
-        | var '=' exp ';' { $$ = newCmdNode(CmdAssig, $1, $3); }
-        | TK_RET exp ';' { $$ = newCmdNode(CmdRet, $2); }
-        | TK_RET ';' { $$ = newCmdNode(CmdRet, NULL); }
-        | chamada ';' { $$ = newCmdNode(CmdCall, $1); }
-	| bloco { $$ = newCmdNode(CmdBlock, $1); }
+	: TK_IF '(' exp ')' comando %prec TK_THEN { $$ = newCmdNodeCmdIf($3, $5, NULL); }
+	| TK_IF '(' exp ')' comando TK_ELSE comando { $$ = newCmdNodeCmdIf($3, $5, $7); }
+        | TK_WHILE '(' exp ')' comando { $$ = newCmdNodeCmdWhile($3, $5); }
+        | var '=' exp ';' { $$ = newCmdNodeCmdAssig($1, $3); }
+        | TK_RET exp ';' { $$ = newCmdNodeCmdRet($2); }
+        | TK_RET ';' { $$ = newCmdNodeCmdRet(NULL); }
+        | chamada ';' { $$ = newCmdNodeCmdCall($1); }
+	| bloco { $$ = newCmdNodeCmdBlock($1); }
 	;
 
 var 
-	: TK_ID { $$ = newVarNode(VarId, $1); } 
-	| var '[' exp ']' { $$ = newVarNode(VarArray, $1, $3); }
+	: TK_ID { $$ = newVarNodeVarId($1); } 
+	| var '[' exp ']' { $$ = newVarNodeVarArray($1, $3); }
 	;
 
 exp 
-	: TK_INT_I { $$ = newExpNode(ExpValue, PrimInt, $1); } 
-	| TK_FLOAT_I { $$ = newExpNode(ExpValue, PrimFloat, (double)$1); } 
-	| TK_CHAR_I { $$ = newExpNode(ExpValue, PrimChar, (int)$1); } 
-	| TK_STR { $$ = newExpNode(ExpValue, PrimStr, $1); } 
-	| var { $$ = newExpNode(ExpVar, $1); }
+	: TK_INT_I { $$ = newExpNodeExpValueInt($1); } 
+	| TK_FLOAT_I { $$ = newExpNodeExpValueFloat($1); } 
+	| TK_CHAR_I { $$ = newExpNodeExpValueChar($1); } 
+	| TK_STR { $$ = newExpNodeExpValueStr($1); } 
+	| var { $$ = newExpNodeExpVar($1); }
 	| '(' exp ')' { $$ = $2; }
-	| chamada { $$ = newExpNode(ExpCall, $1); }
-	| TK_NEW tipo '[' exp ']' { $$ = newExpNode(ExpNew, $2, $4); }
-	| TK_MINUS exp %prec UNARY_MINUS { $$ = newExpNode(ExpUn, ExpUnMinus, $2); }
-	| exp TK_PLUS exp { $$ = newExpNode(ExpBin, ExpBinPlus, $1, $3); }
-	| exp TK_MINUS exp { $$ = newExpNode(ExpBin, ExpBinMinus, $1, $3); }
-	| exp TK_AST exp { $$ = newExpNode(ExpBin, ExpBinMult, $1, $3); }
-	| exp TK_SLASH exp { $$ = newExpNode(ExpBin, ExpBinDiv, $1, $3); }
-	| exp TK_EQUAL exp { $$ = newExpNode(ExpBin, ExpBinEQ, $1, $3); }
-	| exp TK_LEQUAL exp { $$ = newExpNode(ExpBin, ExpBinLE, $1, $3); }
-	| exp TK_GEQUAL exp { $$ = newExpNode(ExpBin, ExpBinGE, $1, $3); }
-	| exp TK_LESS exp { $$ = newExpNode(ExpBin, ExpBinLT, $1, $3); }
-	| exp TK_GREATER exp { $$ = newExpNode(ExpBin, ExpBinGT, $1, $3); }
-	| TK_NOT exp %prec UNARY_NOT { $$ = newExpNode(ExpUn, ExpUnNot, $2); }
-	| exp TK_AND exp { $$ = newExpNode(ExpBin, ExpBinAnd, $1, $3); }
-	| exp TK_OR exp { $$ = newExpNode(ExpBin, ExpBinOr, $1, $3); }
+	| chamada { $$ = newExpNodeExpCall($1); }
+	| TK_NEW tipo '[' exp ']' { $$ = newExpNodeExpNew($2, $4); }
+	| TK_MINUS exp %prec UNARY_MINUS { $$ = newExpNodeExpUn(ExpUnMinus, $2); }
+	| exp TK_PLUS exp { $$ = newExpNodeExpBin(ExpBinPlus, $1, $3); }
+	| exp TK_MINUS exp { $$ = newExpNodeExpBin(ExpBinMinus, $1, $3); }
+	| exp TK_AST exp { $$ = newExpNodeExpBin(ExpBinMult, $1, $3); }
+	| exp TK_SLASH exp { $$ = newExpNodeExpBin(ExpBinDiv, $1, $3); }
+	| exp TK_EQUAL exp { $$ = newExpNodeExpBin(ExpBinEQ, $1, $3); }
+	| exp TK_LEQUAL exp { $$ = newExpNodeExpBin(ExpBinLE, $1, $3); }
+	| exp TK_GEQUAL exp { $$ = newExpNodeExpBin(ExpBinGE, $1, $3); }
+	| exp TK_LESS exp { $$ = newExpNodeExpBin(ExpBinLT, $1, $3); }
+	| exp TK_GREATER exp { $$ = newExpNodeExpBin(ExpBinGT, $1, $3); }
+	| TK_NOT exp %prec UNARY_NOT { $$ = newExpNodeExpUn(ExpUnNot, $2); }
+	| exp TK_AND exp { $$ = newExpNodeExpBin(ExpBinAnd, $1, $3); }
+	| exp TK_OR exp { $$ = newExpNodeExpBin(ExpBinOr, $1, $3); }
 	;
 
 chamada 

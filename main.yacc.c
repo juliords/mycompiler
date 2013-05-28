@@ -21,10 +21,10 @@ int main(int argc, char *argv[])
 	else yyin = fopen(argv[1], "r");
 
 	ret = yyparse();
-/*
+
 	printProgramNode(tree);
 	freeProgramNode(tree);
-*/
+
 	return ret;
 }
 

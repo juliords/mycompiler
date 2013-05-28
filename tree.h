@@ -33,11 +33,13 @@ ListNode* newListNode(void *data, ListNode *next);
 
 ProgramNode* newProgramNode(ListNode *dec);
 
-DeclarationNode* newDeclarationNode(DeclarationType type, ... );
+DeclarationNode* newDeclarationNodeTypeDecVar(DecVarNode* var);
+DeclarationNode* newDeclarationNodeTypeDecFunc(DecFuncNode* func);
 
 DecVarNode* newDecVarNode(TypeNode *type, ListNode *name);
 
-TypeNode* newTypeNode(TypeType type, ... );
+TypeNode* newTypeNodeTypePrim(BaseType prim);
+TypeNode* newTypeNodeTypeArray(TypeNode *array);
 
 DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block);
 
@@ -45,11 +47,25 @@ ParamNode* newParamNode(TypeNode *type, char *id );
 
 BlockNode* newBlockNode(ListNode *var, ListNode *cmd );
 
-CmdNode* newCmdNode(CmdType type, ... );
+CmdNode* newCmdNodeCmdIf(ExpNode *cond, CmdNode *cmd_if, CmdNode *cmd_else);
+CmdNode* newCmdNodeCmdWhile(ExpNode *cond, CmdNode *cmd);
+CmdNode* newCmdNodeCmdAssig(VarNode *var, ExpNode *exp);
+CmdNode* newCmdNodeCmdRet(ExpNode *exp);
+CmdNode* newCmdNodeCmdCall(CallNode *call);
+CmdNode* newCmdNodeCmdBlock(BlockNode *block);
 
-VarNode* newVarNode(VarType type, ... );
+VarNode* newVarNodeVarId(char *id);
+VarNode* newVarNodeVarArray(VarNode *array, ExpNode* exp);
 
-ExpNode* newExpNode(ExpType type, ... );
+ExpNode* newExpNodeExpValueInt(int i);
+ExpNode* newExpNodeExpValueFloat(float f);
+ExpNode* newExpNodeExpValueChar(char c);
+ExpNode* newExpNodeExpValueStr(char *s);
+ExpNode* newExpNodeExpVar(VarNode *var);
+ExpNode* newExpNodeExpBin(ExpBinType type, ExpNode *left, ExpNode *right);
+ExpNode* newExpNodeExpUn(ExpUnType type, ExpNode *exp);
+ExpNode* newExpNodeExpCall(CallNode *call);
+ExpNode* newExpNodeExpNew(TypeNode *type, ExpNode *exp);
 
 CallNode* newCallNode(char *id, ListNode *exp );
 

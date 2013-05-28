@@ -34,34 +34,22 @@ ProgramNode* newProgramNode(ListNode *dec)
 	return p;
 }
 
-DeclarationNode* newDeclarationNode(DeclarationType type, ... )
-{
-	va_list args;
-	NEW(DeclarationNode, p);
-
-	p->type = type;
-
-	va_start(args, type);
-	switch(type)
-	{
-		case DecVar:
-			p->u.var = va_arg(args, DecVarNode*);
-			break;
-		case DecFunc:
-			p->u.func = va_arg(args, DecFuncNode*);
-			break;
-	}
-	va_end(args);
-
-	return p;
-}
-
 DeclarationNode* newDeclarationNodeTypeDecVar(DecVarNode* var)
 {
 	NEW(DeclarationNode, p);
 
 	p->type = DecVar;
-	p->var = var;
+	p->u.var = var;
+
+	return p;
+}
+
+DeclarationNode* newDeclarationNodeTypeDecFunc(DecFuncNode* func)
+{
+	NEW(DeclarationNode, p);
+
+	p->type = DecFunc;
+	p->u.func = func;
 
 	return p;
 }
@@ -99,6 +87,26 @@ TypeNode* newTypeNode(TypeType type, ... )
 	return p;
 }
 
+TypeNode* newTypeNodeTypePrim(BaseType prim)
+{
+	NEW(TypeNode, p);
+	
+	p->type = TypePrim;
+	p->u.prim = prim;
+
+	return p;
+}
+
+TypeNode* newTypeNodeTypeArray(TypeNode *array)
+{
+	NEW(TypeNode, p);
+	
+	p->type = TypeArray;
+	p->u.array = array;
+
+	return p;
+}
+
 DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block)
 {
 	NEW(DecFuncNode, p);
@@ -131,122 +139,185 @@ BlockNode* newBlockNode(ListNode *var, ListNode *cmd )
 	return p;
 }
 
-CmdNode* newCmdNode(CmdType type, ... )
+CmdNode* newCmdNodeCmdIf(ExpNode *cond, CmdNode *cmd_if, CmdNode *cmd_else)
 {
-	va_list args;
 	NEW(CmdNode, p);
 	
-	p->type = type;
+	p->type = CmdIf;
+	p->u.i.cond = cond;
+	p->u.i.cmd_if = cmd_if;
+	p->u.i.cmd_else = cmd_else;
+	
+	return p;
+}
 
-	va_start(args, type);
-	switch(type)
-	{
-		case CmdIf:
-			p->u.i.cond = va_arg(args, ExpNode*);
-			p->u.i.cmd_if = va_arg(args, CmdNode*);
-			p->u.i.cmd_else = va_arg(args, CmdNode*);
-			break;
-
-		case CmdWhile:
-			p->u.w.cond = va_arg(args, ExpNode*);
-			p->u.w.cmd = va_arg(args, CmdNode*);
-			break;
-
-		case CmdAssig:
-			p->u.a.var = va_arg(args, VarNode*);
-			p->u.a.exp = va_arg(args, ExpNode*);
-			break;
-
-		case CmdRet:
-			p->u.r.exp = va_arg(args, ExpNode*);
-			break;
-
-		case CmdCall:
-			p->u.c.call = va_arg(args, CallNode*);
-			break;
-
-		case CmdBlock:
-			p->u.b.block = va_arg(args, BlockNode*);
-			break;
-	}
-	va_end(args);
+CmdNode* newCmdNodeCmdWhile(ExpNode *cond, CmdNode *cmd)
+{
+	NEW(CmdNode, p);
+	
+	p->type = CmdWhile;
+	p->u.w.cond = cond;
+	p->u.w.cmd = cmd;
 
 	return p;
 }
 
-VarNode* newVarNode(VarType type, ... )
+CmdNode* newCmdNodeCmdAssig(VarNode *var, ExpNode *exp)
 {
-	va_list args;
+	NEW(CmdNode, p);
+	
+	p->type = CmdAssig;
+	p->u.a.var = var;
+	p->u.a.exp = exp;
+
+	return p;
+}
+
+CmdNode* newCmdNodeCmdRet(ExpNode *exp)
+{
+	NEW(CmdNode, p);
+	
+	p->type = CmdRet;
+	p->u.r.exp = exp;
+
+	return p;
+}
+
+CmdNode* newCmdNodeCmdCall(CallNode *call)
+{
+	NEW(CmdNode, p);
+	
+	p->type = CmdCall;
+	p->u.c.call = call;
+
+	return p;
+}
+
+CmdNode* newCmdNodeCmdBlock(BlockNode *block)
+{
+	NEW(CmdNode, p);
+	
+	p->type = CmdBlock;
+	p->u.b.block = block;
+
+	return p;
+}
+
+VarNode* newVarNodeVarId(char *id)
+{
 	NEW(VarNode, p);
 
-	p->type = type;
-
-	va_start(args, type);
-	switch(type)
-	{
-		case VarId:
-			p->u.id = va_arg(args, char*);
-			break;
-		case VarArray:
-			p->u.v.array = va_arg(args, VarNode*);
-			p->u.v.exp = va_arg(args, ExpNode*);
-			break;
-	}
-
-	va_end(args);
+	p->type = VarId;
+	p->u.id = id;
 
 	return p;
 }
 
-ExpNode* newExpNode(ExpType type, ... )
+VarNode* newVarNodeVarArray(VarNode *array, ExpNode* exp)
 {
-	va_list args;
+	NEW(VarNode, p);
+
+	p->type = VarArray;
+	p->u.v.array = array;
+	p->u.v.exp = exp;
+
+	return p;
+}
+
+ExpNode* newExpNodeExpValueInt(int i)
+{
 	NEW(ExpNode, p);
 	
-	p->type = type;
-	va_start(args, type);
+	p->type = ExpValue;
+	p->u.prim.type = PrimInt;
+	p->u.prim.u.i = i;
+	
+	return p;
+}
 
-	switch(type)
-	{
-		case ExpVar:
-			p->u.var.var = va_arg(args, VarNode*);
-			break;
-		case ExpValue:
-			p->u.prim.type = va_arg(args, PrimitiveType);
-			switch(p->u.prim.type)
-			{
-				case PrimInt:
-					p->u.prim.u.i = va_arg(args, int);
-					break;
-				case PrimFloat:
-					p->u.prim.u.f = (float)va_arg(args, double);
-					break;
-				case PrimChar:
-					p->u.prim.u.c = (char)va_arg(args, int);
-					break;
-				case PrimStr:
-					p->u.prim.u.s = va_arg(args, char*);
-					break;
-			}
-			break;
-		case ExpBin:
-			p->u.bin.type = va_arg(args, ExpBinType);
-			p->u.bin.left = va_arg(args, ExpNode*);
-			p->u.bin.right = va_arg(args, ExpNode*);
-			break;
-		case ExpUn:
-			p->u.un.type = va_arg(args, ExpUnType);
-			p->u.un.exp = va_arg(args, ExpNode*);
-			break;
-		case ExpCall:
-			p->u.call.call = va_arg(args, CallNode*);
-			break;
-		case ExpNew:
-			p->u.enew.type = va_arg(args, TypeNode*);
-			p->u.enew.exp = va_arg(args, ExpNode*);
-			break;
-	}
-	va_end(args);
+ExpNode* newExpNodeExpValueFloat(float f)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpValue;
+	p->u.prim.type = PrimFloat;
+	p->u.prim.u.f = f;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpValueChar(char c)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpValue;
+	p->u.prim.type = PrimChar;
+	p->u.prim.u.c = c;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpValueStr(char *s)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpValue;
+	p->u.prim.type = PrimChar;
+	p->u.prim.u.s = s;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpVar(VarNode *var)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpVar;
+	p->u.var.var = var;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpBin(ExpBinType type, ExpNode *left, ExpNode *right)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpBin;
+	p->u.bin.type = type;
+	p->u.bin.left = left;
+	p->u.bin.right = right;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpUn(ExpUnType type, ExpNode *exp)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpUn;
+	p->u.un.type = type;
+	p->u.un.exp = exp;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpCall(CallNode *call)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpCall;
+	p->u.call.call = call;
+	
+	return p;
+}
+
+ExpNode* newExpNodeExpNew(TypeNode *type, ExpNode *exp)
+{
+	NEW(ExpNode, p);
+	
+	p->type = ExpNew;
+	p->u.enew.type = type;
+	p->u.enew.exp = exp;
 	
 	return p;
 }
