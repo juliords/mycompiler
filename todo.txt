@@ -32,11 +32,11 @@ Dizer se variavel eh estatica, global ou local (automatica)
 
 Criticas do Roberto:
 
+- desfazer varargs do codigo
+
 - implementar checagem de erro de syntax 
 
 - remover vararg das funcoes (criar varias pro mesmo no)
-
-- Renomear tags de var (base -> prim, rec -> array)
 
 - criar gab pro teste do yacc
 

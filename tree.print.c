@@ -71,9 +71,9 @@ void printTypeNode(TypeNode* p)
 
 	switch(p->type)
 	{
-		case TypeBase:
+		case TypePrim:
 
-			switch(p->u.base)
+			switch(p->u.prim)
 			{
 				case TypeInt:
 					printf("int");
@@ -93,8 +93,8 @@ void printTypeNode(TypeNode* p)
 			}
 			break;
 
-		case TypeRec:
-			printTypeNode(p->u.next);
+		case TypeArray:
+			printTypeNode(p->u.array);
 			printf("[]");
 			break;
 	}
@@ -246,10 +246,10 @@ void printVarNode(VarNode* p)
 		case VarId:
 			printf("%s", p->u.id);
 			break;
-		case VarRec:
-			printVarNode(p->u.rec.next);
+		case VarArray:
+			printVarNode(p->u.v.array);
 			printf("[");
-			printExpNode(p->u.rec.exp);
+			printExpNode(p->u.v.exp);
 			printf("]");
 			break;
 	}

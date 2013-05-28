@@ -130,8 +130,8 @@ enum BaseType
 
 enum TypeType
 {
-	TypeBase,
-	TypeRec,
+	TypePrim,
+	TypeArray,
 };
 
 struct TypeNode
@@ -139,8 +139,8 @@ struct TypeNode
 	TypeType type;
 	union
 	{
-		BaseType base;
-		TypeNode *next;
+		BaseType prim;
+		TypeNode *array;
 	} u;
 };
 
@@ -228,7 +228,7 @@ struct CmdNode
 enum VarType
 {
 	VarId,
-	VarRec,
+	VarArray,
 };
 
 struct VarNode
@@ -241,8 +241,8 @@ struct VarNode
 		struct
 		{
 			ExpNode *exp;
-			VarNode *next;
-		} rec;
+			VarNode *array;
+		} v;
 	} u;
 };
 

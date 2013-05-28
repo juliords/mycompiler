@@ -76,11 +76,11 @@ TypeNode* newTypeNode(TypeType type, ... )
 	va_start(args, type);
 	switch(type)
 	{
-		case TypeBase:
-			p->u.base = va_arg(args, BaseType);
+		case TypePrim:
+			p->u.prim = va_arg(args, BaseType);
 			break;
-		case TypeRec:
-			p->u.next = va_arg(args, TypeNode*);
+		case TypeArray:
+			p->u.array = va_arg(args, TypeNode*);
 			break;
 	}
 	
@@ -177,9 +177,9 @@ VarNode* newVarNode(VarType type, ... )
 		case VarId:
 			p->u.id = va_arg(args, char*);
 			break;
-		case VarRec:
-			p->u.rec.next = va_arg(args, VarNode*);
-			p->u.rec.exp = va_arg(args, ExpNode*);
+		case VarArray:
+			p->u.v.array = va_arg(args, VarNode*);
+			p->u.v.exp = va_arg(args, ExpNode*);
 			break;
 	}
 
@@ -308,9 +308,9 @@ void freeTypeNode(TypeNode* p)
 {
 	if(!p) return;
 
-	if(p->type == TypeRec)
+	if(p->type == TypeArray)
 	{
-		freeTypeNode(p->u.next);
+		freeTypeNode(p->u.array);
 	}
 	free(p);
 }
@@ -416,9 +416,9 @@ void freeVarNode(VarNode* p)
 		case VarId:
 			free(p->u.id);
 			break;
-		case VarRec:
-			freeVarNode(p->u.rec.next);
-			freeExpNode(p->u.rec.exp);
+		case VarArray:
+			freeVarNode(p->u.v.array);
+			freeExpNode(p->u.v.exp);
 			break;
 	}
 	free(p);

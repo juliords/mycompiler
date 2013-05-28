@@ -108,8 +108,8 @@ lista_nomes
 	;
 
 tipo 
-	: tipo_base { $$ = newTypeNode(TypeBase, $1); }
-	| tipo '[' ']' { $$ = newTypeNode(TypeRec, $1);; }
+	: tipo_base { $$ = newTypeNode(TypePrim, $1); }
+	| tipo '[' ']' { $$ = newTypeNode(TypeArray, $1);; }
 	;
 
 tipo_base 
@@ -162,7 +162,7 @@ comando
 
 var 
 	: TK_ID { $$ = newVarNode(VarId, $1); } 
-	| var '[' exp ']' { $$ = newVarNode(VarRec, $1, $3); }
+	| var '[' exp ']' { $$ = newVarNode(VarArray, $1, $3); }
 	;
 
 exp 
