@@ -11,7 +11,7 @@ LDLIBS=-lfl
 
 DEPS=yacc.h tree.h tree.print.h macro.h 
 
-.phony: all clean
+.phony: all clean %.test
 .default: all
 
 all: clex cyacc

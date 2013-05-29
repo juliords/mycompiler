@@ -10,14 +10,13 @@
 #endif
 
 void printProgramNode(ProgramNode* p);
-void printDeclarationNode(DeclarationNode* p);
-void printDecVarNode(ListNode* p);
+void printDeclarationNode(DeclarationNode* p, int tabs);
+void printDecVarNode(ListNode* p, int tabs);
 void printTypeNode(TypeNode* p);
-void printDecFuncNode(DecFuncNode* p);
+void printDecFuncNode(DecFuncNode* p, int tabs);
 void printParamNode(ParamNode* p);
-void printBlockNode(BlockNode* p);
-void printTypeNode(TypeNode* p);
-void printCmdNode(CmdNode* p);
+void printBlockNode(BlockNode* p, int tabs);
+void printCmdNode(CmdNode* p, int tabs);
 void printVarNode(VarNode* p);
 void printExpNode(ExpNode* p);
 void printCallNode(CallNode* p);

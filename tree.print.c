@@ -3,8 +3,6 @@
 #include "tree.h"
 #include "tree.print.h"
 
-static int num_tabs = 0;
-
 void printTabs(int i)
 {
 	while(i--)
@@ -21,28 +19,28 @@ void printProgramNode(ProgramNode* p)
 
 	for(ln = p->dec; ln; ln = ln->next)
 	{
-		printDeclarationNode((DeclarationNode*)ln->data);
+		printDeclarationNode((DeclarationNode*)ln->data, 0);
 		print_space("\n");
 	}
 }
 
-void printDeclarationNode(DeclarationNode* p)
+void printDeclarationNode(DeclarationNode* p, int tabs)
 {
 	if(!p) return;
 
 	switch(p->type)
 	{
 		case DecVar:
-			printDecVarNode(p->u.var);
+			printDecVarNode(p->u.var, tabs);
 			break;
 		case DecFunc:
-			printDecFuncNode(p->u.func);
+			printDecFuncNode(p->u.func, tabs);
 			print_space("\n");
 			break;
 	}
 }
 
-void printDecVarNode(ListNode* p)
+void printDecVarNode(ListNode* p, int tabs)
 {
 	ListNode* l;
 
@@ -52,7 +50,7 @@ void printDecVarNode(ListNode* p)
 	{
 		DecVarNode *v = (DecVarNode*)l->data;
 
-		printTabs(num_tabs);
+		printTabs(tabs);
 		printTypeNode(v->type);
 		printf(" ");
 		printf("%s;", v->name);
@@ -95,12 +93,13 @@ void printTypeNode(TypeNode* p)
 	}
 }
 
-void printDecFuncNode(DecFuncNode* p)
+void printDecFuncNode(DecFuncNode* p, int tabs)
 {
 	ListNode *l;
 
 	if(!p) return;
 
+	printTabs(tabs);
 	printTypeNode(p->type);
 	printf(" %s(", p->id);
 
@@ -115,9 +114,7 @@ void printDecFuncNode(DecFuncNode* p)
 	}
 	printf(")");
 
-	num_tabs++;
-	printBlockNode(p->block);
-	num_tabs--;
+	printBlockNode(p->block, tabs);
 }
 
 void printParamNode(ParamNode* p)
@@ -128,75 +125,69 @@ void printParamNode(ParamNode* p)
 	printf(" %s", p->id);
 }
 
-void printBlockNode(BlockNode* p)
+void printBlockNode(BlockNode* p, int tabs)
 {
 	ListNode* l;
 
 	print_space("\n");
-	printTabs(num_tabs-1);
+	printTabs(tabs);
 	printf("{");
 	print_space("\n");
 
 	if(p)
 	{
-		printDecVarNode(p->var);
+		printDecVarNode(p->var, tabs+1);
 
 		for(l = p->cmd; l; l = l->next)
 		{
-			printCmdNode((CmdNode*)l->data);
+			printCmdNode((CmdNode*)l->data, tabs+1);
 			print_space("\n");
 		}
 	}
 
-	printTabs(num_tabs-1);
+	printTabs(tabs);
 	printf("}");
 }
 
-void printCmdNode(CmdNode* p)
+void printCmdNode(CmdNode* p, int tabs)
 {
 	if(!p) return;
 
 	switch(p->type)
 	{
 		case CmdIf:
-			printTabs(num_tabs);
+			printTabs(tabs);
 			printf("if(");
 			print_space(" ");
 			printExpNode(p->u.i.cond);
 			print_space(" ");
 			printf(")");
 
-			num_tabs++;
-			printCmdNode(p->u.i.cmd_if);
-			num_tabs--;
+			printCmdNode(p->u.i.cmd_if, tabs);
 
 			if(p->u.i.cmd_else)
 			{
 				print_space("\n");
-				printTabs(num_tabs);
+				printTabs(tabs);
 				printf("else");
 
-				num_tabs++;
-				printCmdNode(p->u.i.cmd_else);
-				num_tabs--;
+				printCmdNode(p->u.i.cmd_else, tabs);
 			}
 			break;
 
 		case CmdWhile:
-			printTabs(num_tabs);
+			printTabs(tabs);
 			printf("while(");
 			print_space(" ");
 			printExpNode(p->u.w.cond);
 			print_space(" ");
 			printf(")");
 
-			num_tabs++;
-			printCmdNode(p->u.w.cmd);
-			num_tabs--;
+			printCmdNode(p->u.w.cmd, tabs);
 			break;
 
 		case CmdAssig:
-			printTabs(num_tabs);
+			printTabs(tabs);
 			printVarNode(p->u.a.var);
 			print_space(" ");
 			printf("=");
@@ -206,7 +197,7 @@ void printCmdNode(CmdNode* p)
 			break;
 
 		case CmdRet:
-			printTabs(num_tabs);
+			printTabs(tabs);
 			printf("return");
 			if(p->u.r.exp)
 			{
@@ -217,13 +208,13 @@ void printCmdNode(CmdNode* p)
 			break;
 
 		case CmdCall: 
-			printTabs(num_tabs);
+			printTabs(tabs);
 			printCallNode(p->u.c.call);
 			printf(";");
 			break;
 
 		case CmdBlock:
-			printBlockNode(p->u.b.block);
+			printBlockNode(p->u.b.block, tabs);
 			break;
 	}
 }

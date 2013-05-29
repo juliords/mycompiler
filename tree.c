@@ -82,29 +82,6 @@ ListNode* newDecVarNode(TypeNode *type, ListNode *name)
 	return name;
 }
 
-TypeNode* newTypeNode(TypeType type, ... )
-{
-	va_list args;
-	NEW(TypeNode, p);
-	
-	p->type = type;
-
-	va_start(args, type);
-	switch(type)
-	{
-		case TypePrim:
-			p->u.prim = va_arg(args, BaseType);
-			break;
-		case TypeArray:
-			p->u.array = va_arg(args, TypeNode*);
-			break;
-	}
-	
-	va_end(args);
-
-	return p;
-}
-
 TypeNode* newTypeNodeTypePrim(BaseType prim)
 {
 	NEW(TypeNode, p);
