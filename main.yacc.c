@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
 	ret = yyparse();
 
 	printProgramNode(tree);
-	freeProgramNode(tree);
 
 	return ret;
 }

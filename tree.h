@@ -30,13 +30,14 @@ typedef struct 	CmdNode 	CmdNode;
 /* --------------------------------------------------------------------------------- */
 
 ListNode* newListNode(void *data, ListNode *next);
+ListNode *catListNode(ListNode *a, ListNode *b);
 
 ProgramNode* newProgramNode(ListNode *dec);
 
-DeclarationNode* newDeclarationNodeTypeDecVar(DecVarNode* var);
+DeclarationNode* newDeclarationNodeTypeDecVar(ListNode* var);
 DeclarationNode* newDeclarationNodeTypeDecFunc(DecFuncNode* func);
 
-DecVarNode* newDecVarNode(TypeNode *type, ListNode *name);
+ListNode* newDecVarNode(TypeNode *type, ListNode *name);
 
 TypeNode* newTypeNodeTypePrim(BaseType prim);
 TypeNode* newTypeNodeTypeArray(TypeNode *array);
@@ -72,22 +73,6 @@ CallNode* newCallNode(char *id, ListNode *exp );
 
 /* --------------------------------------------------------------------------------- */
 
-void freeProgramNode(ProgramNode* p);
-void freeDeclarationNode(DeclarationNode* p);
-void freeDecVarNode(DecVarNode* p);
-void freeTypeNode(TypeNode* p);
-void freeDecFuncNode(DecFuncNode* p);
-void freeParamNode(ParamNode* p);
-void freeBlockNode(BlockNode* p);
-void freeTypeNode(TypeNode* p);
-void freeCmdNode(CmdNode* p);
-void freeVarNode(VarNode* p);
-void freeExpNode(ExpNode* p);
-void freeCallNode(CallNode* p);
-
-
-/* --------------------------------------------------------------------------------- */
-
 struct ListNode
 {
 	void *data;
@@ -115,7 +100,7 @@ struct DeclarationNode
 	DeclarationType type;
 	union
 	{
-		DecVarNode *var;
+		ListNode *var;
 		DecFuncNode *func;
 	} u;
 };
@@ -131,7 +116,7 @@ struct DeclarationNode
 struct DecVarNode
 {
 	TypeNode *type;
-	ListNode *name;
+	char *name;
 };
 
 /* --------------------------------------------------------------------------------- */

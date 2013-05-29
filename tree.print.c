@@ -43,26 +43,23 @@ void printDeclarationNode(DeclarationNode* p)
 	}
 }
 
-void printDecVarNode(DecVarNode* p)
+void printDecVarNode(ListNode* p)
 {
 	ListNode* l;
 
 	if(!p) return;
 
-	printTabs(num_tabs);
-	printTypeNode(p->type);
-	printf(" ");
-
-	for(l = p->name; l; l = l->next)
+	for(l = p; l; l = l->next)
 	{
-		if(l != p->name) 
-		{
-			printf(",");
-			print_space(" ");
-		}
-		printf("%s", (char*)l->data);
+		DecVarNode *v = (DecVarNode*)l->data;
+
+		if(l != p) print_space("\n");
+
+		printTabs(num_tabs);
+		printTypeNode(v->type);
+		printf(" ");
+		printf("%s;", v->name);
 	}
-	printf(";");
 }
 
 void printTypeNode(TypeNode* p)
@@ -144,11 +141,8 @@ void printBlockNode(BlockNode* p)
 
 	if(p)
 	{
-		for(l = p->var; l; l = l->next)
-		{
-			printDecVarNode((DecVarNode*)l->data);
-			print_space("\n");
-		}
+		printDecVarNode(p->var);
+		print_space("\n");
 
 		for(l = p->cmd; l; l = l->next)
 		{

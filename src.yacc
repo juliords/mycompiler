@@ -34,7 +34,6 @@ ProgramNode *tree;
 	ListNode 	*lista;
 	ProgramNode 	*programa;
 	DeclarationNode	*declaracao;
-	DecVarNode 	*dec_variavel;
 	TypeNode 	*tipo;
 	BaseType 	tipo_base;
 	DecFuncNode 	*dec_funcao;
@@ -66,7 +65,7 @@ ProgramNode *tree;
 %type <programa>	programa
 %type <lista>		declaracoes
 %type <declaracao>	declaracao
-%type <dec_variavel>	dec_variavel
+%type <lista>		dec_variavel
 %type <lista>		lista_nomes
 %type <tipo>		tipo
 %type <tipo_base>	tipo_base
@@ -140,8 +139,8 @@ bloco
 	;
 
 dec_variaveis
-	: dec_variavel { $$ = newListNode($1, NULL); }
-	| dec_variaveis dec_variavel { $$ = newListNode($2, $1); }
+	: dec_variavel { $$ = $1; }
+	| dec_variaveis dec_variavel { $$ = catListNode($1, $2); }
 	;
 
 comandos

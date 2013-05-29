@@ -3,6 +3,8 @@ LEX=lex
 YACC=yacc
 CC=gcc
 
+TESTFD=tests
+
 YACCFLAGS=-d -v --debug
 CFLAGS=-ansi -Wall -O2 -Wno-unused-function
 LDLIBS=-lfl
@@ -31,6 +33,9 @@ cyacc: main.yacc.o yacc.o lex.o tree.o tree.print.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
+
+%.in: cyacc
+	./$< $(TESTFD)/$@
 
 clean:
 	rm -f clex cyacc lex.* yacc.* *.o

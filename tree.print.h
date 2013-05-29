@@ -11,7 +11,7 @@
 
 void printProgramNode(ProgramNode* p);
 void printDeclarationNode(DeclarationNode* p);
-void printDecVarNode(DecVarNode* p);
+void printDecVarNode(ListNode* p);
 void printTypeNode(TypeNode* p);
 void printDecFuncNode(DecFuncNode* p);
 void printParamNode(ParamNode* p);
