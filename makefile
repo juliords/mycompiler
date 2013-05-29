@@ -34,8 +34,8 @@ cyacc: main.yacc.o yacc.o lex.o tree.o tree.print.o
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-%.in: cyacc
-	./$< $(TESTFD)/$@
+%.test: cyacc $(TESTFD)/%.in
+	@./$^
 
 clean:
 	rm -f clex cyacc lex.* yacc.* *.o

@@ -34,7 +34,6 @@ void printDeclarationNode(DeclarationNode* p)
 	{
 		case DecVar:
 			printDecVarNode(p->u.var);
-			print_space("\n");
 			break;
 		case DecFunc:
 			printDecFuncNode(p->u.func);
@@ -53,12 +52,11 @@ void printDecVarNode(ListNode* p)
 	{
 		DecVarNode *v = (DecVarNode*)l->data;
 
-		if(l != p) print_space("\n");
-
 		printTabs(num_tabs);
 		printTypeNode(v->type);
 		printf(" ");
 		printf("%s;", v->name);
+		print_space("\n");
 	}
 }
 
@@ -142,7 +140,6 @@ void printBlockNode(BlockNode* p)
 	if(p)
 	{
 		printDecVarNode(p->var);
-		print_space("\n");
 
 		for(l = p->cmd; l; l = l->next)
 		{

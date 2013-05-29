@@ -107,12 +107,6 @@ struct DeclarationNode
 
 /* --------------------------------------------------------------------------------- */
 
-/**
- * Otimizacao:
- * - Ao inves de criar uma lista de nomes, pode-se criar logo uma lista
- *   de variaveis. De modo que estas as representem, de fato.
- */
-
 struct DecVarNode
 {
 	TypeNode *type;
