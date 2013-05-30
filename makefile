@@ -59,7 +59,7 @@ print-header:
 %-yacc: $(YACCX) $(TESTFD)/%.in
 	@./$^
 
-all-lex: $(LEXX) $(TESTFL) 
+all-lex: $(LEXX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
 		echo -n "Testing lex ("; \
@@ -69,21 +69,23 @@ all-lex: $(LEXX) $(TESTFL)
 		diff $(f:.in=.lex.out) $(f:.in=.lex.gab) >/dev/null; \
 		if [ $$? -eq 0 ]; then \
 			echo "OK!"; \
+			rm $(f:.in=.lex.out); \
 		else \
 			echo "ERROR!"; \
 		fi; \
 	)
 
-all-yacc: $(YACCX) $(TESTFL) 
+all-yacc: $(YACCX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
 		echo -n "Testing yacc ("; \
 		echo -n $(f); \
 		echo -n ")... "; \
-		./$< $(f) > $(f:.in=.yacc.out); \
+		./$< $(f) 1>$(f:.in=.yacc.out) 2>$(f:.in=.yacc.err); \
 		diff $(f:.in=.yacc.out) $(f:.in=.yacc.gab) >/dev/null; \
 		if [ $$? -eq 0 ]; then \
 			echo "OK!"; \
+			rm $(f:.in=.yacc.out) $(f:.in=.yacc.err); \
 		else \
 			echo "ERROR!"; \
 		fi; \
