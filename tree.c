@@ -45,26 +45,10 @@ ProgramNode* newProgramNode(ListNode *dec)
 
 DeclarationNode* newDeclarationNodeTypeDecVar(ListNode* var)
 {
-	ListNode *l;
 	NEW(DeclarationNode, p);
 
 	p->type = DecVar;
 	p->u.var = var;
-
-	for(l = var; l; l = l->next)
-	{
-		DecVarNode *v = (DecVarNode*)l->data;
-
-		v->context = DecVarGlobal;
-		if(addGlobalVar(v))
-		{
-			/* TODO: OK */
-		}
-		else
-		{
-			/* TODO: ERROR */
-		}
-	}
 
 	return p;
 }

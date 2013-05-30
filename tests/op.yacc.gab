@@ -1,0 +1,18 @@
+void test()
+{
+	int a;
+	int b;
+	a = (a + b);
+	a = (a - b);
+	a = (a * b);
+	a = (a / b);
+	a = (a == b);
+	a = (a <= b);
+	a = (a >= b);
+	a = (a < b);
+	a = (a > b);
+	a = !a;
+	a = (a && b);
+	a = (a || b);
+}
+

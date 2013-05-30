@@ -1,0 +1,28 @@
+float f;
+
+int printc(char s)
+{
+}
+
+int main()
+{
+	int i;
+	char[] s;
+	s = "Hello World \"#%d\"";
+	f = 12300.000000;
+	i = -1;
+	while( (i < s[(i + 1)]) )
+	{
+		if( (f <= 10) )
+		{
+			printf(s, i);
+		}
+		else
+		{
+			printc('\n');
+		}
+		i = (i - 1);
+	}
+	return 0;
+}
+
