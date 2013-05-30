@@ -2,6 +2,8 @@
 #ifndef TREE_PRINT_H
 #define TREE_PRINT_H
 
+#include "tree.h"
+
 #define MINIFIED 0
 #if MINIFIED
 	#define print_space(c)

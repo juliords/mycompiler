@@ -5,6 +5,7 @@
 /* --------------------------------------------------------------------------------- */
 
 typedef enum 	DeclarationType	DeclarationType;
+typedef enum 	DecVarType	DecVarType;
 typedef enum 	BaseType	BaseType;
 typedef enum 	TypeType	TypeType;
 typedef enum 	CmdType 	CmdType;
@@ -107,10 +108,22 @@ struct DeclarationNode
 
 /* --------------------------------------------------------------------------------- */
 
+enum DecVarType
+{
+	DecVarGlobal,
+	DecVarLocal,
+};
+
 struct DecVarNode
 {
+	DecVarType context;
+
 	TypeNode *type;
 	char *name;
+
+	int nref;
+	int nwrite;
+	int nread;
 };
 
 /* --------------------------------------------------------------------------------- */
@@ -147,6 +160,8 @@ struct DecFuncNode
 	char *id;
 	ListNode *params;
 	BlockNode *block;
+
+	int nref;
 };
 
 /* --------------------------------------------------------------------------------- */

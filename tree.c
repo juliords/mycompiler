@@ -1,8 +1,6 @@
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include "tree.h"
+#include "tree.check.h"
 #include "macro.h"
 
 ListNode* newListNode(void *data, ListNode *list)
@@ -47,10 +45,26 @@ ProgramNode* newProgramNode(ListNode *dec)
 
 DeclarationNode* newDeclarationNodeTypeDecVar(ListNode* var)
 {
+	ListNode *l;
 	NEW(DeclarationNode, p);
 
 	p->type = DecVar;
 	p->u.var = var;
+
+	for(l = var; l; l = l->next)
+	{
+		DecVarNode *v = (DecVarNode*)l->data;
+
+		v->context = DecVarGlobal;
+		if(addGlobalVar(v))
+		{
+			/* TODO: OK */
+		}
+		else
+		{
+			/* TODO: ERROR */
+		}
+	}
 
 	return p;
 }
@@ -75,6 +89,10 @@ ListNode* newDecVarNode(TypeNode *type, ListNode *name)
 
 		v->type = type;
 		v->name = (char*)p->data;
+
+		v->nref = 0;
+		v->nwrite = 0;
+		v->nread = 0;
 
 		p->data = v;
 	}
@@ -110,6 +128,8 @@ DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNod
 	p->id = id;
 	p->params = params;
 	p->block = block;
+
+	p->nref = 0;
 	
 	return p;
 }

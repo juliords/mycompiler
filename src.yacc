@@ -1,5 +1,4 @@
 %{
-#include <stdio.h>
 #include "tree.h"
 
 int yydebug = 0;

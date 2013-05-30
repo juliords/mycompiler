@@ -15,7 +15,7 @@ void yyerror(char *s)
 
 int main(int argc, char *argv[])
 {
-	int ret;	
+	int ret;
 
 	if (argc < 2) yyin = stdin;
 	else yyin = fopen(argv[1], "r");

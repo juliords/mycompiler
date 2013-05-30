@@ -1,24 +1,15 @@
-
 %{
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
 
 #include "tree.h"
 #include "yacc.h"
+#include "macro.h"
 
 int fileno(FILE*);
 
 char* strcpy_malloc(char* str)
 {
-	char *s = (char*) malloc(strlen(str)+1);
-	if(!s)
-	{
-		fputs("Malloc FAILED: LEX\n", stderr);
-		exit(1);
-	}
+	NEWN(char, s, strlen(str)+1);
+
 	strcpy(s, str);
 	return s;
 }

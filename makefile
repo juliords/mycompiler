@@ -9,7 +9,7 @@ YACCFLAGS=-d -v --debug
 CFLAGS=-ansi -Wall -O2 -Wno-unused-function
 LDLIBS=-lfl
 
-DEPS=yacc.h tree.h tree.print.h macro.h 
+DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h 
 
 .phony: all clean %.test
 .default: all
@@ -28,13 +28,16 @@ yacc.c yacc.h: src.yacc
 clex: main.lex.o lex.o
 	$(CC) -o $@ $^ $(LDLIBS)
 
-cyacc: main.yacc.o yacc.o lex.o tree.o tree.print.o
+cyacc: main.yacc.o yacc.o lex.o tree.o tree.print.o tree.check.o
 	$(CC) -o $@ $^ $(LDLIBS)
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-%.test: cyacc $(TESTFD)/%.in
+%.yacc: cyacc $(TESTFD)/%.in
+	@./$^
+
+%.lex: clex $(TESTFD)/%.in
 	@./$^
 
 clean:
