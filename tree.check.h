@@ -4,17 +4,16 @@
 
 #include "tree.h"
 
-int addGlobalVar(DecVarNode*);
-DecVarNode* getGlobalVar(char *id);
+void checkProgramNode(ProgramNode* p);
+void checkDeclarationNode(DeclarationNode* p);
+void checkDecVarNode(ListNode* p, DecVarType type);
+void checkDecFuncNode(DecFuncNode* p);
+void checkBlockNode(BlockNode* p);
+void checkCmdNode(CmdNode* p);
+void checkVarNode(VarNode* p);
+void checkExpNode(ExpNode* p);
+void checkCallNode(CallNode *p);
 
-int addContextVar(DecVarNode* v);
-DecVarNode* getContextVar(char *id);
-
-DecVarNode* getVar(char *id);
-int addVarList(ListNode *vars, DecVarType type);
-
-void pushContextVarList();
-void popContextVarList();
 
 #endif
 

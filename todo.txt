@@ -17,6 +17,8 @@
 
 - implementar estrutura de pilha e hash 
 
+- verificar variaveis com o mesmo nome
+
 
 ----------------------------------------------
 
@@ -34,6 +36,13 @@ Criticas do Roberto:
 
 - implementar checagem de erro de syntax 
 
-- criar gab pro teste do yacc
+
+----------------------------------------------
+
+Checagem de tipos:
+
+- Chamada de funcao
+- Retornos
+- Atribuicoes
 
 

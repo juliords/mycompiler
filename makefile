@@ -22,7 +22,7 @@ run: print-header all all-lex all-yacc
 
 # -------------------------------------------------------------------------
 
-all: clex cyacc
+all: $(LEXX) $(YACCX)
 
 lex.c: src.lex
 	$(LEX) -t $< > $@

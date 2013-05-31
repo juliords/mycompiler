@@ -2,6 +2,7 @@
 *.log
 *.err
 *.o
+*.out
 *~
 clex
 cyacc

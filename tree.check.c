@@ -4,15 +4,7 @@
 #include "tree.check.h"
 #include "macro.h"
 
-ListNode *var_global, *var_static, *var_local;
-
-int addGlobalVar(DecVarNode* v)
-{
-	if(getGlobalVar(v->name)) return 0;
-
-	var_global = newListNode(v, var_global);
-	return 1;
-}
+ListNode *var_global, *var_local, *func_list;
 
 DecVarNode* getGlobalVar(char *id)
 {
@@ -31,16 +23,7 @@ DecVarNode* getGlobalVar(char *id)
 	return NULL;
 }
 
-int addContextVar(DecVarNode* v)
-{
-	if(!var_local) return 0;
-	if(getContextVar(v->name)) return 0;
-
-	var_local->data = newListNode(v, (ListNode*)var_local->data);
-	return 1;
-}
-
-DecVarNode* getContextVar(char *id)
+DecVarNode* getLocalVar(char *id)
 {
 	ListNode *l;
 
@@ -59,36 +42,11 @@ DecVarNode* getContextVar(char *id)
 	return NULL;
 }
 
-int addVarList(ListNode *vars, DecVarType type)
-{
-	ListNode *l;
-	
-	for(l = vars; l; l = l->next)
-	{
-		DecVarNode *v = (DecVarNode*)l->data;
-
-		v->context = type;
-
-		switch(type)
-		{
-			case DecVarGlobal:
-				addGlobalVar(v);
-				break;
-
-			case DecVarLocal:
-				addContextVar(v);
-				break;
-		}
-	}
-
-	return 1;
-}
-
 DecVarNode* getVar(char *id)
 {
 	DecVarNode *p;
 
-	p = getContextVar(id);
+	p = getLocalVar(id);
 	if(p) return p;
 
 	p = getGlobalVar(id);
@@ -97,7 +55,7 @@ DecVarNode* getVar(char *id)
 	return NULL;
 }
 
-void pushContextVarList()
+void pushLocalVarList()
 {
 	NEW(ListNode, c);
 	
@@ -107,20 +65,217 @@ void pushContextVarList()
 	var_local = c;
 }
 
-void popContextVarList()
+DecFuncNode* getFunc(char *id)
 {
-	ListNode *p, *next;
+	ListNode *l;
 
-	if(!var_local) return;
-
-	for(p = (ListNode*)var_local->data; p; p = next)
+	for(l = func_list; l; l = l->next)
 	{
-		next = p->next;
-		free(p);
+		DecFuncNode *found = (DecFuncNode*)l->data;
+
+		if(!strcmp(found->id, id))
+		{
+			return found;
+		}
 	}
 
-	p = var_local;
-	free(var_local);
-	var_local = p->next;
+	return NULL;
+}
+
+/* -------------------------------------------------------------------- */
+
+void checkProgramNode(ProgramNode* p)
+{
+	ListNode* ln;
+
+	if(!p) return;
+
+	for(ln = p->dec; ln; ln = ln->next)
+	{
+		checkDeclarationNode((DeclarationNode*)ln->data);
+	}
+}
+
+void checkDeclarationNode(DeclarationNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case DecVar:
+			checkDecVarNode(p->u.var, DecVarGlobal);
+			break;
+		case DecFunc:
+			checkDecFuncNode(p->u.func);
+			break;
+	}
+}
+
+void checkDecVarNode(ListNode* p, DecVarType type)
+{
+	ListNode* l;
+
+	if(!p) return;
+
+	for(l = p; l; l = l->next)
+	{
+		DecVarNode *v = (DecVarNode*)l->data;
+
+		v->context = type;
+
+		switch(type)
+		{
+			case DecVarGlobal:
+				if(!getGlobalVar(v->name))
+				{
+					var_global = newListNode(v, var_global);
+				}
+				else
+				{
+					/* TODO: ERROR (duplicated global variable) */
+				}
+				break;
+
+			case DecVarLocal:
+				if(!getLocalVar(v->name))
+				{
+					var_local->data = newListNode(v, (ListNode*)var_local->data);
+				}
+				else
+				{
+					/* TODO: ERROR (duplicated local variable) */
+				}
+				break;
+		}
+	}
+}
+
+void checkDecFuncNode(DecFuncNode* p)
+{
+	if(!p) return;
+
+	if(!getFunc(p->id))
+	{
+		func_list = newListNode(p, func_list);
+	}
+	else
+	{
+		/* TODO: ERROR (duplicated function) */
+	}
+
+	pushLocalVarList();
+	checkBlockNode(p->block);
+}
+
+void checkBlockNode(BlockNode* p)
+{
+	ListNode* l;
+
+	if(p)
+	{
+		checkDecVarNode(p->var, DecVarLocal);
+
+		for(l = p->cmd; l; l = l->next)
+		{
+			checkCmdNode((CmdNode*)l->data);
+		}
+	}
+}
+
+void checkCmdNode(CmdNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case CmdIf:
+			checkExpNode(p->u.i.cond);
+			checkCmdNode(p->u.i.cmd_if);
+			checkCmdNode(p->u.i.cmd_else);
+			break;
+
+		case CmdWhile:
+			checkExpNode(p->u.w.cond);
+			checkCmdNode(p->u.w.cmd);
+			break;
+
+		case CmdAssig:
+			checkVarNode(p->u.a.var);
+			checkExpNode(p->u.a.exp);
+			break;
+
+		case CmdRet:
+			checkExpNode(p->u.r.exp);
+			break;
+
+		case CmdCall: 
+			checkCallNode(p->u.c.call);
+			break;
+
+		case CmdBlock:
+			checkBlockNode(p->u.b.block);
+			break;
+	}
+}
+
+void checkVarNode(VarNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case VarId:
+			break;
+		case VarArray:
+			checkVarNode(p->u.v.array);
+			checkExpNode(p->u.v.exp);
+			break;
+	}
+}
+
+void checkExpNode(ExpNode* p)
+{
+	if(!p) return;
+
+	switch(p->type)
+	{
+		case ExpVar:
+			checkVarNode(p->u.var.var);
+			break;
+
+		case ExpValue:
+			break;
+
+		case ExpBin:
+			checkExpNode(p->u.bin.left);
+			checkExpNode(p->u.bin.right);
+			break;
+
+		case ExpUn:
+			checkExpNode(p->u.un.exp);
+			break;
+
+		case ExpCall:
+			checkCallNode(p->u.call.call); 
+			break;
+
+		case ExpNew:
+			checkExpNode(p->u.enew.exp);
+			break;
+	}
+}
+
+void checkCallNode(CallNode *p)
+{
+	if(!p) return;
+
+	if( (p->dec = getFunc(p->id)) ) 
+	{
+		p->dec->nref++;
+	}
+	else
+	{
+		/* TODO: ERROR(function not declared) */
+	}
 }
 
