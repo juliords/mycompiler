@@ -27,9 +27,7 @@ DecVarNode* getLocalVar(char *id)
 {
 	ListNode *l;
 
-	if(!var_local) return NULL;
-
-	for(l = (ListNode*)var_local->data; l; l = l->next)
+	for(l = var_local; l; l = l->next)
 	{
 		DecVarNode *found = (DecVarNode*)l->data;
 
@@ -55,14 +53,17 @@ DecVarNode* getVar(char *id)
 	return NULL;
 }
 
-void pushLocalVarList()
+void cleanVarLocalList()
 {
-	NEW(ListNode, c);
-	
-	c->data = NULL;
-	c->next = var_local;
+	ListNode *p, *next;
 
-	var_local = c;
+	for(p = var_local; p; p = next)
+	{
+		next = p->next;
+		free(p);
+	}
+
+	var_local = NULL;
 }
 
 DecFuncNode* getFunc(char *id)
@@ -111,11 +112,8 @@ int compareTypeNode(TypeNode* a, TypeNode* b)
 
 TypeNode* getTypeFromVar(VarNode* v)
 {
-	NEW(TypeNode, p);
-	p->prim = TypeInt;
-	p->dims = 0;
-	/* TODO */
-	return p;
+	if(!v) return NULL;
+	return v->atype;
 }
 
 TypeNode* getTypeFromCall(CallNode* c)
@@ -180,18 +178,18 @@ void checkDecVarNode(ListNode* p, DecVarType type)
 				}
 				else
 				{
-					/* TODO: ERROR (duplicated global variable) */
+					fprintf(stderr,"ERROR: duplicated global var \"%s\"\n", v->name);
 				}
 				break;
 
 			case DecVarLocal:
 				if(!getLocalVar(v->name))
 				{
-					var_local->data = newListNode(v, (ListNode*)var_local->data);
+					var_local = newListNode(v, var_local);
 				}
 				else
 				{
-					/* TODO: ERROR (duplicated local variable) */
+					fprintf(stderr,"ERROR: duplicated local var \"%s\"\n", v->name);
 				}
 				break;
 		}
@@ -208,10 +206,10 @@ void checkDecFuncNode(DecFuncNode* p)
 	}
 	else
 	{
-		/* TODO: ERROR (duplicated function) */
+		fprintf(stderr,"ERROR: duplicated function \"%s\"\n", p->id);
 	}
 
-	pushLocalVarList();
+	cleanVarLocalList();
 	checkBlockNode(p->block);
 }
 
@@ -275,15 +273,26 @@ void checkVarNode(VarNode* p)
 	switch(p->type)
 	{
 		case VarId:
+			if( (p->u.b.dec = getVar(p->u.b.id)) )
+			{
+				p->u.b.dec->nref++;
+				p->atype = copyTypeNode(p->u.b.dec->type);
+			}
+			else
+			{
+				fprintf(stderr,"ERROR: undeclared variable \"%s\"\n", p->u.b.id);
+			}
 			break;
 		case VarArray:
-			checkVarNode(p->u.v.array);
-			checkExpNode(p->u.v.exp);
+			checkVarNode(p->u.d.var);
+			checkExpNode(p->u.d.exp);
+
+			p->atype = copyTypeNode(p->u.d.var->atype);
+			p->atype->dims--;
+
+			/* TODO: exp must be a number */
 			break;
 	}
-
-	/* TODO: link */
-	/* TODO: check exp */
 }
 
 void checkExpNode(ExpNode *p)
@@ -424,7 +433,7 @@ void checkCallNode(CallNode *p)
 	}
 	else
 	{
-		/* TODO: ERROR(function not declared) */
+		fprintf(stderr,"ERROR: undeclared function \"%s\"\n", p->id);
 	}
 
 	/* TODO: check params type */

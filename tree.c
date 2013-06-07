@@ -73,11 +73,7 @@ ListNode* newDecVarNode(TypeNode *type, ListNode *name)
 
 		v->type = type;
 		v->name = (char*)p->data;
-
 		v->nref = 0;
-		v->nwrite = 0;
-		v->nread = 0;
-
 		p->data = v;
 	}
 	
@@ -203,18 +199,19 @@ VarNode* newVarNodeVarId(char *id)
 	NEW(VarNode, p);
 
 	p->type = VarId;
-	p->u.id = id;
+	p->u.b.id = id;
+	p->u.b.dec = NULL;
 
 	return p;
 }
 
-VarNode* newVarNodeVarArray(VarNode *array, ExpNode* exp)
+VarNode* newVarNodeVarArray(VarNode *var, ExpNode* exp)
 {
 	NEW(VarNode, p);
 
 	p->type = VarArray;
-	p->u.v.array = array;
-	p->u.v.exp = exp;
+	p->u.d.var = var;
+	p->u.d.exp = exp;
 
 	return p;
 }

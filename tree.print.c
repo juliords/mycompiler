@@ -220,12 +220,12 @@ void printVarNode(VarNode* p)
 	switch(p->type)
 	{
 		case VarId:
-			printf("%s", p->u.id);
+			printf("%s", p->u.b.id);
 			break;
 		case VarArray:
-			printVarNode(p->u.v.array);
+			printVarNode(p->u.d.var);
 			printf("[");
-			printExpNode(p->u.v.exp);
+			printExpNode(p->u.d.exp);
 			printf("]");
 			break;
 	}

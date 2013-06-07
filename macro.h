@@ -4,6 +4,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<stdarg.h>
 
 #define ALLOCN(t, n) (t*)malloc((n)*sizeof(t))
 #define ALLOC(t) ALLOCN(t, 1)

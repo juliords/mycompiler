@@ -122,8 +122,6 @@ struct DecVarNode
 	char *name;
 
 	int nref;
-	int nwrite;
-	int nread;
 };
 
 /* --------------------------------------------------------------------------------- */
@@ -234,15 +232,21 @@ enum VarType
 struct VarNode
 {
 	VarType type;
+	TypeNode *atype;
+
 	union
 	{
-		char *id;
+		struct
+		{
+			char *id;
+			DecVarNode* dec;
+		} b;
 		
 		struct
 		{
 			ExpNode *exp;
-			VarNode *array;
-		} v;
+			VarNode *var;
+		} d;
 	} u;
 };
 

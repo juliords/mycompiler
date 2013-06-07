@@ -3,6 +3,11 @@ TK_ID (test)
 OTHER: (
 OTHER: )
 OTHER: {
+TK_INT
+TK_ID (a)
+OTHER: ,
+TK_ID (b)
+OTHER: ;
 TK_IF
 OTHER: (
 TK_ID (a)
