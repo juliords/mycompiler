@@ -102,7 +102,7 @@ TypeNode* copyTypeNode(TypeNode* t)
 	return p;
 }
 
-/* return: 0 -> different ; 1 -> equal ; */
+/* return: 0 -> not equal ; 1 -> equal ; */
 int compareTypeNode(TypeNode* a, TypeNode* b)
 {
 	if(!a || !b) 
@@ -131,7 +131,13 @@ TypeNode* getTypeFromCall(CallNode* c)
 
 TypeNode* getTypeFromExp(ExpNode *e)
 {
-	if(!e) return NULL;
+	if(!e)
+	{
+		NEW(TypeNode, p);
+		p->prim = TypeVoid;
+		p->dims = 0;
+		return p;
+	}
 	return copyTypeNode(e->atype);
 }
 
@@ -149,6 +155,19 @@ TypeNode *getTypeFromCurrFunc()
 	if(!func_list) return NULL;
 	f = (DecFuncNode*)func_list->last->data;
 	return copyTypeNode(f->type);
+}
+
+char *getVarName(VarNode* v)
+{
+	if(v) switch(v->type)
+	{
+		case VarId:
+			return v->u.b.id;
+
+		case VarArray:
+			return getVarName(v->u.d.var);
+	}
+	return "< without name >";
 }
 
 /* -------------------------------------------------------------------- */
@@ -278,20 +297,22 @@ void checkCmdNode(CmdNode* p)
 			te = getTypeFromExp(p->u.a.exp);
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible expression assignment in variable '%s'", getCurrFuncName(), "<TODO>");
+				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'", getCurrFuncName(),  getVarName(p->u.a.var));
 			}
+			free(te); free(tv);
 
 			break;
 
 		case CmdRet:
-			checkExpNode(p->u.a.exp);
+			checkExpNode(p->u.r.exp);
 
-			te = getTypeFromExp(p->u.a.exp);
+			te = getTypeFromExp(p->u.r.exp);
 			tv = getTypeFromCurrFunc();
 			if(!compareTypeNode(tv, te))
 			{
 				fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName());
 			}
+			free(te); free(tv);
 
 			break;
 
@@ -336,7 +357,7 @@ void checkVarNode(VarNode* p)
 			}
 			else
 			{
-				fprintf(stderr,"ERROR: In function '%s': index expression of var '%s' must be an integer\n", getCurrFuncName(), "<TODO>");
+				fprintf(stderr,"ERROR: In function '%s': index expression of var '%s' must be an integer\n", getCurrFuncName(), getVarName(p->u.d.var));
 			}
 			break;
 		}
@@ -394,8 +415,7 @@ void checkExpNode(ExpNode *p)
 			if(!l || !r || l->dims > 0 || r->dims > 0 ||
 			   l->prim == TypeVoid || r->prim == TypeVoid)
 			{
-				/* TODO: ERROR */
-				fprintf(stderr,"ERROR: In function '%s': index expression using array or void type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression non-numeric type\n", getCurrFuncName());
 				r->prim = TypeVoid;
 			}
 			else switch(p->u.bin.type)
@@ -437,8 +457,7 @@ void checkExpNode(ExpNode *p)
 
 			if(!t || t->dims > 0 || t->prim == TypeVoid)
 			{
-				/* TODO: ERROR */
-				fprintf(stderr,"ERROR: In function '%s': index expression using array or void type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression using non-numeric type\n", getCurrFuncName());
 				t->prim = TypeVoid;
 			}
 			else switch(p->u.un.type)
@@ -484,8 +503,14 @@ void checkCallNode(CallNode *p)
 		{
 			ExpNode *exp = (ExpNode*)expl->data;
 			ParamNode* par = (ParamNode*)parl->data;
+			TypeNode *te, *tp;
 
-			if(!compareTypeNode(getTypeFromExp(exp), par->type))
+			checkExpNode(exp);
+
+			te = getTypeFromExp(exp);
+			tp = par->type;
+
+			if(!compareTypeNode(te, tp))
 			{
 				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(), par->id, p->id);
 			}

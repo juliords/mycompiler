@@ -1,11 +1,11 @@
-void func2(int i, char c, float f)
+void func2(int i, char c, float f, char[] s)
 {
 	return;
 }
 
 int func1()
 {
-	func2(1, 'a', 10.200000);
+	func2(1, 'a', 10.200000, "str");
 	return 0;
 }
 

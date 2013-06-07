@@ -9,6 +9,11 @@ TK_ID (c)
 OTHER: ,
 TK_FLOAT
 TK_ID (f)
+OTHER: ,
+TK_CHAR
+OTHER: [
+OTHER: ]
+TK_ID (s)
 OTHER: )
 OTHER: {
 TK_RET
@@ -26,6 +31,8 @@ OTHER: ,
 TK_CHAR_I (a)
 OTHER: ,
 TK_FLOAT_I (10.200000)
+OTHER: ,
+TK_STR (str)
 OTHER: )
 OTHER: ;
 TK_RET
