@@ -136,20 +136,10 @@ enum BaseType
 	TypeVoid,
 };
 
-enum TypeType
-{
-	TypePrim,
-	TypeArray,
-};
-
 struct TypeNode
 {
-	TypeType type;
-	union
-	{
-		BaseType prim;
-		TypeNode *array;
-	} u;
+	BaseType prim;
+	int dims;
 };
 
 /* --------------------------------------------------------------------------------- */
@@ -300,6 +290,8 @@ enum ExpUnType
 struct ExpNode
 {
 	ExpType type;
+	TypeNode *atype;
+
 	union
 	{
 		struct

@@ -84,6 +84,54 @@ DecFuncNode* getFunc(char *id)
 
 /* -------------------------------------------------------------------- */
 
+TypeNode* copyTypeNode(TypeNode* t)
+{
+	NEW(TypeNode, p);
+
+	p->prim = t->prim;
+	p->dims = t->dims;
+
+	return p;
+}
+
+/* return: 0 -> different ; 1 -> equal ; */
+int compareTypeNode(TypeNode* a, TypeNode* b)
+{
+	if(!a || !b) 
+		return 0;
+
+	if(a->prim != b->prim)
+		return 0;
+
+	if(a->dims != b->dims)
+		return 0;
+
+	return 1;
+}
+
+TypeNode* getTypeFromVar(VarNode* v)
+{
+	NEW(TypeNode, p);
+	p->prim = TypeInt;
+	p->dims = 0;
+	/* TODO */
+	return p;
+}
+
+TypeNode* getTypeFromCall(CallNode* c)
+{
+	if(!c) return NULL;
+	return copyTypeNode(c->dec->type);
+}
+
+TypeNode* getTypeFromExp(ExpNode *e)
+{
+	if(!e) return NULL;
+	return copyTypeNode(e->atype);
+}
+
+/* -------------------------------------------------------------------- */
+
 void checkProgramNode(ProgramNode* p)
 {
 	ListNode* ln;
@@ -202,10 +250,12 @@ void checkCmdNode(CmdNode* p)
 		case CmdAssig:
 			checkVarNode(p->u.a.var);
 			checkExpNode(p->u.a.exp);
+			/* TODO: check type */
 			break;
 
 		case CmdRet:
-			checkExpNode(p->u.r.exp);
+			checkExpNode(p->u.a.exp);
+			/* TODO: check type */
 			break;
 
 		case CmdCall: 
@@ -231,9 +281,12 @@ void checkVarNode(VarNode* p)
 			checkExpNode(p->u.v.exp);
 			break;
 	}
+
+	/* TODO: link */
+	/* TODO: check exp */
 }
 
-void checkExpNode(ExpNode* p)
+void checkExpNode(ExpNode *p)
 {
 	if(!p) return;
 
@@ -241,27 +294,123 @@ void checkExpNode(ExpNode* p)
 	{
 		case ExpVar:
 			checkVarNode(p->u.var.var);
+			p->atype = getTypeFromVar(p->u.var.var);
 			break;
 
 		case ExpValue:
+		{
+			NEW(TypeNode, t);
+			t->dims = 0;
+
+			switch(p->u.prim.type)
+			{
+				case PrimInt:
+					t->prim = TypeInt;
+					break;
+
+				case PrimFloat:
+					t->prim = TypeFloat;
+					break;
+
+				case PrimChar:
+					t->prim = TypeChar;
+					break;
+
+				case PrimStr:
+					t->prim = TypeChar;
+					t->dims = 1;
+					break;
+			}
+			
+			p->atype = t;
 			break;
+		}
 
 		case ExpBin:
+		{
+			TypeNode *l, *r;
 			checkExpNode(p->u.bin.left);
 			checkExpNode(p->u.bin.right);
+			l = getTypeFromExp(p->u.bin.left);
+			r = getTypeFromExp(p->u.bin.right);
+
+			if(!l || !r || l->dims > 0 || r->dims > 0 ||
+			   l->prim == TypeVoid || r->prim == TypeVoid)
+			{
+				/* TODO: ERROR */
+				p->atype = NULL;
+			}
+
+			switch(p->u.bin.type)
+			{
+				case ExpBinPlus:
+				case ExpBinMinus:
+				case ExpBinMult:
+				case ExpBinDiv:
+				{
+					if(l->prim == TypeFloat || r->prim == TypeFloat)
+						r->prim = TypeFloat;
+					else
+						r->prim = TypeInt;
+					break;
+				}
+
+				case ExpBinEQ:
+				case ExpBinLE:
+				case ExpBinGE:
+				case ExpBinLT:
+				case ExpBinGT:
+				case ExpBinAnd:
+				case ExpBinOr:
+				{
+					r->prim = TypeInt;
+					break;
+				}
+			}
+			free(l);
+			p->atype = r;
 			break;
+		}
 
 		case ExpUn:
+		{
+			TypeNode *t;
 			checkExpNode(p->u.un.exp);
+			t = getTypeFromExp(p->u.un.exp);
+
+			if(!t || t->dims > 0 || t->prim == TypeVoid)
+			{
+				/* TODO: ERROR */
+				p->atype = NULL;
+			}
+
+			switch(p->u.un.type)
+			{
+				case ExpUnMinus: 
+					if(t->prim == TypeChar)	t->prim = TypeInt;
+					break;
+
+				case ExpUnNot: 
+					t->prim = TypeInt; 
+					break;
+			}
+
+			p->atype = t;
 			break;
+		}
 
 		case ExpCall:
-			checkCallNode(p->u.call.call); 
+			checkCallNode(p->u.call.call);
+			p->atype = getTypeFromCall(p->u.call.call); 
 			break;
 
 		case ExpNew:
-			checkExpNode(p->u.enew.exp);
+		{
+			TypeNode *t = copyTypeNode(p->u.enew.type);
+			t->dims++;
+			p->atype = t;
 			break;
+		}
 	}
 }
 
@@ -277,5 +426,7 @@ void checkCallNode(CallNode *p)
 	{
 		/* TODO: ERROR(function not declared) */
 	}
+
+	/* TODO: check params type */
 }
 

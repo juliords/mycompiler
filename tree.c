@@ -88,20 +88,16 @@ TypeNode* newTypeNodeTypePrim(BaseType prim)
 {
 	NEW(TypeNode, p);
 	
-	p->type = TypePrim;
-	p->u.prim = prim;
+	p->prim = prim;
+	p->dims = 0;
 
 	return p;
 }
 
-TypeNode* newTypeNodeTypeArray(TypeNode *array)
+TypeNode* newTypeNodeTypeArray(TypeNode *t)
 {
-	NEW(TypeNode, p);
-	
-	p->type = TypeArray;
-	p->u.array = array;
-
-	return p;
+	t->dims++;
+	return t;
 }
 
 DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block)

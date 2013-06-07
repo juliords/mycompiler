@@ -1,23 +1,12 @@
 
-- Fazer checagem de tipos. Aproveitando para determinar se variaveis são
-  globais ou não.
+Tratamento de erros:
+- String não fechada
+- Char não fechado
+- Comentario não fechado
+- Variavel não declarada
+- Falha no parser antes de ???
+- Checagem de tipos em atribuição
 
-- Fazer cada variavel apontar para a declaracao do tipo correspondente. O
-  mesmo vale para funções.
-
-- Tentar otimizar contas feitas com constantes.
-
-- Usar "or", para otimizar codigo assembly
-
-- Implementar curto circuito em operações logicas
-
-- Melhorar testes (var global, ...)
-
-- Pre-calcular quantidade de dimensoes dos tipos
-
-- implementar estrutura de pilha e hash 
-
-- verificar variaveis com o mesmo nome
 
 
 ----------------------------------------------
@@ -32,17 +21,38 @@ Dizer se variavel eh estatica, global ou local (automatica)
 
 ----------------------------------------------
 
-Criticas do Roberto:
-
-- implementar checagem de erro de syntax 
-
-
-----------------------------------------------
-
 Checagem de tipos:
 
 - Chamada de funcao
 - Retornos
 - Atribuicoes
+- Indexacao de array
+
+
+----------------------------------------------
+
+- Indexacao de arrays permite apenas inteiros
+
+- Variavel indexada deve ser array
+
+- Var e decVar devem ter sempre o mesmo numero de posicoes. Não é possivel
+  operar sobre ponteiros.
+
+- Como relacionar var com decvar?
+
+- Como representar tipo? Tem como melhorar o atual?
+
+
+----------------------------------------------
+
+- Como realizar contagem de linhas corretamente no lex? Dado que comentarios
+  podem fazer parte de mais de uma linha?
+ 
+- Qual expressao regular deve ser usada para pegar comentarios e strings nao
+  fechadas?
+
+- Ao reconhecer um comentario, ele nao deve ser passado para a etapa do yacc,
+  mas como fazer o lex nao retornar esse token, e comecar a processar a partir
+  da primeira regra novamente? Chamar o yylex recursivamente é gambiarra!
 
 

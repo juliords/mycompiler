@@ -18,7 +18,7 @@ DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h
 .phony: run all clean print-header %-yacc %-lex
 .default: run
 
-run: print-header all all-lex all-yacc
+run: print-header all testall-lex testall-yacc
 
 # -------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ print-header:
 %-yacc: $(YACCX) $(TESTFD)/%.in
 	@./$^
 
-all-lex: $(LEXX) 
+testall-lex: $(LEXX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
 		echo -n "Testing lex ("; \
@@ -75,7 +75,7 @@ all-lex: $(LEXX)
 		fi; \
 	)
 
-all-yacc: $(YACCX) 
+testall-yacc: $(YACCX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
 		echo -n "Testing yacc ("; \

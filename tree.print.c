@@ -60,36 +60,30 @@ void printDecVarNode(ListNode* p, int tabs)
 
 void printTypeNode(TypeNode* p)
 {
+	int i;
 	if(!p) return;
 
-	switch(p->type)
+	switch(p->prim)
 	{
-		case TypePrim:
-
-			switch(p->u.prim)
-			{
-				case TypeInt:
-					printf("int");
-					break;
-
-				case TypeChar:
-					printf("char");
-					break;
-
-				case TypeFloat:
-					printf("float");
-					break;
-
-				case TypeVoid:
-					printf("void");
-					break;
-			}
+		case TypeInt:
+			printf("int");
 			break;
 
-		case TypeArray:
-			printTypeNode(p->u.array);
-			printf("[]");
+		case TypeChar:
+			printf("char");
 			break;
+
+		case TypeFloat:
+			printf("float");
+			break;
+
+		case TypeVoid:
+			printf("void");
+			break;
+	}
+	for (i = 0; i < p->dims; i++) 
+	{
+		printf("[]");
 	}
 }
 

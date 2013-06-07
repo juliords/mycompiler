@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "tree.h"
+#include "tree.check.h"
 #include "tree.print.h"
 #include "yacc.h"
 

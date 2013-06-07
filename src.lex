@@ -6,6 +6,8 @@
 
 int fileno(FILE*);
 
+int linenum;
+
 char* strcpy_malloc(char* str)
 {
 	NEWN(char, s, strlen(str)+1);
@@ -60,7 +62,7 @@ IDENTIFIER	[_a-zA-Z][a-zA-Z0-9]*
 COMMENT		"/*"([^*]|"\n"|"*"[^/])*"*"*"*/"
 INTEGER		"0"[0-7]*|"0"[xX][0-9A-Fa-f]+|[1-9][0-9]*
 CHAR		"'"([^']?|\\.)"'"
-FLOAT		[0-9]+"."[0-9]+([eE][-+]?[0-9]+)?[f]?
+FLOAT		[0-9]+"."[0-9]+([eE][-+]?[0-9]+)?[fF]?
 STRING		\"([^\\"]|\\.)*\"
 
 
@@ -128,8 +130,9 @@ return 	return TK_RET;
 */
 }
 
+\n { ++linenum; /* wrong number, because comment eats break line */ } 
 
-[ \t\n]+	/* Eat up white space. */
+[ \t]+	/* Eat up white space. */
 
 . return yytext[0];
 
