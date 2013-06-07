@@ -1,12 +1,3 @@
-TK_INT
-TK_ID (func1)
-OTHER: (
-OTHER: )
-OTHER: {
-TK_RET
-TK_INT_I (0)
-OTHER: ;
-OTHER: }
 TK_VOID
 TK_ID (func2)
 OTHER: (
@@ -18,12 +9,26 @@ TK_ID (c)
 OTHER: ,
 TK_FLOAT
 TK_ID (f)
-OTHER: ,
-TK_VOID
-TK_ID (p)
 OTHER: )
 OTHER: {
 TK_RET
-TK_ID (p)
+OTHER: ;
+OTHER: }
+TK_INT
+TK_ID (func1)
+OTHER: (
+OTHER: )
+OTHER: {
+TK_ID (func2)
+OTHER: (
+TK_INT_I (1)
+OTHER: ,
+TK_CHAR_I (a)
+OTHER: ,
+TK_FLOAT_I (10.200000)
+OTHER: )
+OTHER: ;
+TK_RET
+TK_INT_I (0)
 OTHER: ;
 OTHER: }

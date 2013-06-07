@@ -199,6 +199,7 @@ VarNode* newVarNodeVarId(char *id)
 	NEW(VarNode, p);
 
 	p->type = VarId;
+	p->atype = NULL;
 	p->u.b.id = id;
 	p->u.b.dec = NULL;
 
@@ -210,6 +211,7 @@ VarNode* newVarNodeVarArray(VarNode *var, ExpNode* exp)
 	NEW(VarNode, p);
 
 	p->type = VarArray;
+	p->atype = NULL;
 	p->u.d.var = var;
 	p->u.d.exp = exp;
 

@@ -1,10 +1,11 @@
-int func1()
+void func2(int i, char c, float f)
 {
-	return 0;
+	return;
 }
 
-void func2(int i, char c, float f, void p)
+int func1()
 {
-	return p;
+	func2(1, 'a', 10.200000);
+	return 0;
 }
 

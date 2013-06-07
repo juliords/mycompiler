@@ -89,6 +89,13 @@ TypeNode* copyTypeNode(TypeNode* t)
 {
 	NEW(TypeNode, p);
 
+	if(!t)
+	{
+		p->prim = TypeVoid;
+		p->dims = 0;
+		return p;
+	}
+
 	p->prim = t->prim;
 	p->dims = t->dims;
 
@@ -100,7 +107,7 @@ int compareTypeNode(TypeNode* a, TypeNode* b)
 {
 	if(!a || !b) 
 		return 0;
-
+	
 	if(a->prim != b->prim)
 		return 0;
 
@@ -118,7 +125,7 @@ TypeNode* getTypeFromVar(VarNode* v)
 
 TypeNode* getTypeFromCall(CallNode* c)
 {
-	if(!c) return NULL;
+	if(!c || !c->dec) return NULL;
 	return copyTypeNode(c->dec->type);
 }
 
@@ -126,6 +133,22 @@ TypeNode* getTypeFromExp(ExpNode *e)
 {
 	if(!e) return NULL;
 	return copyTypeNode(e->atype);
+}
+
+char *getCurrFuncName()
+{
+	DecFuncNode* f;
+	if(!func_list) return NULL;
+	f = (DecFuncNode*)func_list->last->data;
+	return f->id;
+}
+
+TypeNode *getTypeFromCurrFunc()
+{
+	DecFuncNode* f;
+	if(!func_list) return NULL;
+	f = (DecFuncNode*)func_list->last->data;
+	return copyTypeNode(f->type);
 }
 
 /* -------------------------------------------------------------------- */
@@ -178,7 +201,7 @@ void checkDecVarNode(ListNode* p, DecVarType type)
 				}
 				else
 				{
-					fprintf(stderr,"ERROR: duplicated global var \"%s\"\n", v->name);
+					fprintf(stderr,"ERROR: redeclaration of global variable '%s'\n", v->name);
 				}
 				break;
 
@@ -189,7 +212,7 @@ void checkDecVarNode(ListNode* p, DecVarType type)
 				}
 				else
 				{
-					fprintf(stderr,"ERROR: duplicated local var \"%s\"\n", v->name);
+					fprintf(stderr,"ERROR: In function '%s': redeclaration of variable '%s'\n", getCurrFuncName(), v->name);
 				}
 				break;
 		}
@@ -206,7 +229,7 @@ void checkDecFuncNode(DecFuncNode* p)
 	}
 	else
 	{
-		fprintf(stderr,"ERROR: duplicated function \"%s\"\n", p->id);
+		fprintf(stderr,"ERROR: redefinition of function '%s'\n", p->id);
 	}
 
 	cleanVarLocalList();
@@ -230,6 +253,8 @@ void checkBlockNode(BlockNode* p)
 
 void checkCmdNode(CmdNode* p)
 {
+	TypeNode *tv, *te;
+
 	if(!p) return;
 
 	switch(p->type)
@@ -248,12 +273,26 @@ void checkCmdNode(CmdNode* p)
 		case CmdAssig:
 			checkVarNode(p->u.a.var);
 			checkExpNode(p->u.a.exp);
-			/* TODO: check type */
+
+			tv = getTypeFromVar(p->u.a.var);
+			te = getTypeFromExp(p->u.a.exp);
+			if(!compareTypeNode(tv, te))
+			{
+				fprintf(stderr,"ERROR: In function '%s': incompatible expression assignment in variable '%s'", getCurrFuncName(), "<TODO>");
+			}
+
 			break;
 
 		case CmdRet:
 			checkExpNode(p->u.a.exp);
-			/* TODO: check type */
+
+			te = getTypeFromExp(p->u.a.exp);
+			tv = getTypeFromCurrFunc();
+			if(!compareTypeNode(tv, te))
+			{
+				fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName());
+			}
+
 			break;
 
 		case CmdCall: 
@@ -280,18 +319,27 @@ void checkVarNode(VarNode* p)
 			}
 			else
 			{
-				fprintf(stderr,"ERROR: undeclared variable \"%s\"\n", p->u.b.id);
+				fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(), p->u.b.id);
 			}
 			break;
 		case VarArray:
+		{
+			TypeNode* t;
 			checkVarNode(p->u.d.var);
 			checkExpNode(p->u.d.exp);
 
-			p->atype = copyTypeNode(p->u.d.var->atype);
-			p->atype->dims--;
-
-			/* TODO: exp must be a number */
+			t = p->u.d.exp->atype;
+			if(t && t->prim == TypeInt && t->dims == 0)
+			{
+				p->atype = copyTypeNode(t);
+				p->atype->dims--;
+			}
+			else
+			{
+				fprintf(stderr,"ERROR: In function '%s': index expression of var '%s' must be an integer\n", getCurrFuncName(), "<TODO>");
+			}
 			break;
+		}
 	}
 }
 
@@ -347,10 +395,10 @@ void checkExpNode(ExpNode *p)
 			   l->prim == TypeVoid || r->prim == TypeVoid)
 			{
 				/* TODO: ERROR */
-				p->atype = NULL;
+				fprintf(stderr,"ERROR: In function '%s': index expression using array or void type\n", getCurrFuncName());
+				r->prim = TypeVoid;
 			}
-
-			switch(p->u.bin.type)
+			else switch(p->u.bin.type)
 			{
 				case ExpBinPlus:
 				case ExpBinMinus:
@@ -390,10 +438,10 @@ void checkExpNode(ExpNode *p)
 			if(!t || t->dims > 0 || t->prim == TypeVoid)
 			{
 				/* TODO: ERROR */
-				p->atype = NULL;
+				fprintf(stderr,"ERROR: In function '%s': index expression using array or void type\n", getCurrFuncName());
+				t->prim = TypeVoid;
 			}
-
-			switch(p->u.un.type)
+			else switch(p->u.un.type)
 			{
 				case ExpUnMinus: 
 					if(t->prim == TypeChar)	t->prim = TypeInt;
@@ -425,17 +473,33 @@ void checkExpNode(ExpNode *p)
 
 void checkCallNode(CallNode *p)
 {
+	ListNode *expl, *parl;
 	if(!p) return;
 
 	if( (p->dec = getFunc(p->id)) ) 
 	{
 		p->dec->nref++;
+
+		for(expl = p->exp,parl = p->dec->params; expl; expl = expl->next, parl = parl->next)
+		{
+			ExpNode *exp = (ExpNode*)expl->data;
+			ParamNode* par = (ParamNode*)parl->data;
+
+			if(!compareTypeNode(getTypeFromExp(exp), par->type))
+			{
+				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(), par->id, p->id);
+			}
+		}
+
+		if(parl)
+		{
+			fprintf(stderr,"ERROR: In function '%s': insuficient number of arguments -> '%s'\n", getCurrFuncName(), p->id);
+		}
 	}
 	else
 	{
-		fprintf(stderr,"ERROR: undeclared function \"%s\"\n", p->id);
+		fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(), p->id);
 	}
 
-	/* TODO: check params type */
 }
 

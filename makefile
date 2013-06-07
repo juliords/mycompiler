@@ -10,7 +10,7 @@ TESTFD=tests
 TESTFL=$(wildcard $(TESTFD)/*.in)
 
 YACCFLAGS=-d -v --debug
-CFLAGS=-ansi -Wall -O2 -Wno-unused-function
+CFLAGS=-ansi -Wall -O0 -Wno-unused-function -g
 LDLIBS=-lfl
 
 DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h 
@@ -83,7 +83,7 @@ testall-yacc: $(YACCX)
 		echo -n ")... "; \
 		./$< $(f) 1>$(f:.in=.yacc.out) 2>$(f:.in=.yacc.err); \
 		diff $(f:.in=.yacc.out) $(f:.in=.yacc.gab) >/dev/null; \
-		if [ $$? -eq 0 ]; then \
+		if [[ ( $$? -eq 0 ) && ( ! -s  $(f:.in=.yacc.err) ) ]]; then \
 			echo "OK!"; \
 			rm $(f:.in=.yacc.out) $(f:.in=.yacc.err); \
 		else \

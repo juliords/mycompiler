@@ -133,6 +133,7 @@ parametro
 
 bloco 
 	: '{' dec_variaveis comandos '}' { $$ = newBlockNode($2, $3); }
+	| '{' dec_variaveis '}' { $$ = newBlockNode($2, NULL); }
 	| '{' comandos '}' { $$ = newBlockNode(NULL, $2); }
 	| '{' /* vazio */ '}' { $$ = NULL; }
 	;
