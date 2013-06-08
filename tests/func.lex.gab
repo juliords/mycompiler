@@ -24,15 +24,35 @@ TK_ID (func1)
 OTHER: (
 OTHER: )
 OTHER: {
+TK_CHAR
+OTHER: [
+OTHER: ]
+TK_ID (str)
+OTHER: ;
+TK_ID (str)
+OTHER: =
+TK_NEW
+TK_CHAR
+OTHER: [
+TK_INT_I (10)
+OTHER: ]
+OTHER: ;
 TK_ID (func2)
 OTHER: (
 TK_INT_I (1)
+TK_PLUS
+TK_INT_I (2)
 OTHER: ,
-TK_CHAR_I (a)
+TK_ID (str)
+OTHER: [
+TK_INT_I (1)
+OTHER: ]
 OTHER: ,
 TK_FLOAT_I (10.200000)
+TK_AST
+TK_INT_I (2)
 OTHER: ,
-TK_STR (str)
+TK_ID (str)
 OTHER: )
 OTHER: ;
 TK_RET

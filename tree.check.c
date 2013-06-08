@@ -297,7 +297,7 @@ void checkCmdNode(CmdNode* p)
 			te = getTypeFromExp(p->u.a.exp);
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'", getCurrFuncName(),  getVarName(p->u.a.var));
+				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'\n", getCurrFuncName(),  getVarName(p->u.a.var));
 			}
 			free(te); free(tv);
 
@@ -352,7 +352,7 @@ void checkVarNode(VarNode* p)
 			t = p->u.d.exp->atype;
 			if(t && t->prim == TypeInt && t->dims == 0)
 			{
-				p->atype = copyTypeNode(t);
+				p->atype = copyTypeNode(p->u.d.var->atype);
 				p->atype->dims--;
 			}
 			else
@@ -499,7 +499,7 @@ void checkCallNode(CallNode *p)
 	{
 		p->dec->nref++;
 
-		for(expl = p->exp,parl = p->dec->params; expl; expl = expl->next, parl = parl->next)
+		for(expl = p->exp,parl = p->dec->params; expl && parl; expl = expl->next, parl = parl->next)
 		{
 			ExpNode *exp = (ExpNode*)expl->data;
 			ParamNode* par = (ParamNode*)parl->data;
@@ -519,6 +519,11 @@ void checkCallNode(CallNode *p)
 		if(parl)
 		{
 			fprintf(stderr,"ERROR: In function '%s': insuficient number of arguments -> '%s'\n", getCurrFuncName(), p->id);
+		}
+
+		if(expl)
+		{
+			fprintf(stderr,"ERROR: In function '%s': number of arguments exceeded -> '%s'\n", getCurrFuncName(), p->id);
 		}
 	}
 	else

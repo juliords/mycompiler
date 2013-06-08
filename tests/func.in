@@ -6,7 +6,9 @@ void func2(int i, char c, float f, char[] s)
 
 int func1()
 {
-	func2(1,'a',10.2,"str");
+	char[] str;
+	str = new char[10];
+	func2(1+2,str[1],10.2*2,str);
 	return 0;
 }
 
