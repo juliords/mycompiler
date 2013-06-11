@@ -54,10 +54,10 @@ print-header:
 	@echo "----------------------------------------"
 
 %-lex: $(LEXX) $(TESTFD)/%.in
-	@./$^
+	@./$+
 
 %-yacc: $(YACCX) $(TESTFD)/%.in
-	@./$^
+	@./$+
 
 testall-lex: $(LEXX) 
 	@echo 

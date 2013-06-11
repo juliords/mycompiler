@@ -120,7 +120,7 @@ int compareTypeNode(TypeNode* a, TypeNode* b)
 TypeNode* getTypeFromVar(VarNode* v)
 {
 	if(!v) return NULL;
-	return v->atype;
+	return copyTypeNode(v->atype);
 }
 
 TypeNode* getTypeFromCall(CallNode* c)
