@@ -415,7 +415,7 @@ void checkExpNode(ExpNode *p)
 			if(!l || !r || l->dims > 0 || r->dims > 0 ||
 			   l->prim == TypeVoid || r->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression non-numeric type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression of non-numeric type\n", getCurrFuncName());
 				r->prim = TypeVoid;
 			}
 			else switch(p->u.bin.type)
@@ -457,7 +457,7 @@ void checkExpNode(ExpNode *p)
 
 			if(!t || t->dims > 0 || t->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression using non-numeric type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression using of non-numeric type\n", getCurrFuncName());
 				t->prim = TypeVoid;
 			}
 			else switch(p->u.un.type)

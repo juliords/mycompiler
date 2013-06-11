@@ -1,4 +1,23 @@
 
+Relatorio da apresentação:
+- Exp do tipo char eh convertido pra inteira
+- Variavel char aceita inteiro
+- Adicionar expressao do tipo cast
+- Tratar dimensao negativa
+- Mudar ExpValue -> ExpConst
+- Adicionar parametros às variaveis locais
+- Tratar escopo de variaveis (blocos)
+- Passar lista de variaveis por parametro (e não global)
+- Comparacao (== e !=) deve aceitar referencia (dim > 0)
+- Condicionais não devem aceitar referencia, para que a consistencia com os operadores logicos (|| e &&) permaneça
+- Adicionar contagem de linha no proprio lex (buscar funcao que pega cada char)
+- Passar valor da linha pela informacao semantica de cada palavra reservada
+- Melhorar frases de erro
+- Trocar %f -> %g ao printar float
+
+
+----------------------------------------------
+
 Tratamento de erros:
 - String não fechada
 - Char não fechado
