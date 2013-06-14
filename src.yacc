@@ -12,8 +12,8 @@ ProgramNode *tree;
 %start programa
 
 %token TK_INT TK_CHAR TK_FLOAT
-%token TK_INT_I TK_CHAR_I TK_FLOAT_I
-%token TK_VOID TK_STR TK_NEW
+%token TK_INT_I TK_CHAR_I TK_FLOAT_I TK_STR
+%token TK_VOID TK_NEW
 
 %token TK_ID
 %token TK_IF TK_ELSE TK_WHILE
@@ -55,11 +55,17 @@ ProgramNode *tree;
 %nonassoc TK_THEN
 %nonassoc TK_ELSE
 
+%type<i> 		TK_IF TK_ELSE TK_WHILE
+%type<i> 		TK_INT TK_CHAR TK_FLOAT
+%type<i> 		TK_VOID TK_NEW TK_RET
+%type<i> 		TK_PLUS TK_MINUS TK_AST TK_SLASH
+%type<i> 		TK_EQUAL TK_LEQUAL TK_GEQUAL TK_LESS TK_GREATER
+%type<i> 		TK_NOT TK_AND TK_OR
+
 %type <i>		TK_INT_I
 %type <c>		TK_CHAR_I
 %type <f>		TK_FLOAT_I
-%type <s>		TK_STR
-%type <s>		TK_ID
+%type <s>		TK_STR TK_ID
 
 %type <programa>	programa
 %type <lista>		declaracoes

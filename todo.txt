@@ -1,7 +1,7 @@
 
 Relatorio da apresentação:
-- Exp do tipo char eh convertido pra inteira
-- Variavel char aceita inteiro
+- Exp do tipo char eh convertido pra inteiro
+- Variavel char deve aceitar inteiro
 - Adicionar expressao do tipo cast
 - Tratar dimensao negativa
 - Mudar ExpValue -> ExpConst
@@ -13,7 +13,6 @@ Relatorio da apresentação:
 - Adicionar contagem de linha no proprio lex (buscar funcao que pega cada char)
 - Passar valor da linha pela informacao semantica de cada palavra reservada
 - Melhorar frases de erro
-- Trocar %f -> %g ao printar float
 
 
 ----------------------------------------------

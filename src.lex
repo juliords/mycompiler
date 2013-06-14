@@ -55,8 +55,23 @@ void convert_escaped_char (char *s)
 	s[i] = '\0';
 }
 
+int mygetc(FILE *s)
+{
+	int c = getc(s);
+
+	if(c == '\n') 
+	{
+		linenum++;
+	}
+
+	return c;
+}
+#undef getc
+#define getc(fp) mygetc(fp)
+
 %}
 
+%option always-interactive
 
 IDENTIFIER	[_a-zA-Z][a-zA-Z0-9]*
 COMMENT		"/*"([^*]|"\n"|"*"[^/])*"*"*"*/"
@@ -68,29 +83,29 @@ STRING		\"([^\\"]|\\.)*\"
 
 %%
 
-int 	return TK_INT;
-char 	return TK_CHAR;
-float 	return TK_FLOAT;
-void 	return TK_VOID;
-new 	return TK_NEW;
+int 	{ yylval.i = linenum; return TK_INT;	}
+char 	{ yylval.i = linenum; return TK_CHAR;	}
+float 	{ yylval.i = linenum; return TK_FLOAT;	}
+void 	{ yylval.i = linenum; return TK_VOID;	}
+new 	{ yylval.i = linenum; return TK_NEW;	}
 
-if 	return TK_IF;
-else 	return TK_ELSE;
-while 	return TK_WHILE;
-return 	return TK_RET;
+if 	{ yylval.i = linenum; return TK_IF;	}
+else 	{ yylval.i = linenum; return TK_ELSE;	}
+while 	{ yylval.i = linenum; return TK_WHILE;	}
+return 	{ yylval.i = linenum; return TK_RET;	}
 
-"+"	return TK_PLUS;
-"-" 	return TK_MINUS;
-"*"	return TK_AST;
-"/"	return TK_SLASH;
-"=="	return TK_EQUAL;
-"<="	return TK_LEQUAL;
-">="	return TK_GEQUAL;
-"<"	return TK_LESS;
-">"	return TK_GREATER;
-"!"	return TK_NOT;
-"&&"	return TK_AND;
-"||"	return TK_OR;
+"+"	{ yylval.i = linenum; return TK_PLUS;	}
+"-" 	{ yylval.i = linenum; return TK_MINUS;	}
+"*"	{ yylval.i = linenum; return TK_AST;	}
+"/"	{ yylval.i = linenum; return TK_SLASH;	}
+"=="	{ yylval.i = linenum; return TK_EQUAL;	}
+"<="	{ yylval.i = linenum; return TK_LEQUAL;	}
+">="	{ yylval.i = linenum; return TK_GEQUAL;	}
+"<"	{ yylval.i = linenum; return TK_LESS;	}
+">"	{ yylval.i = linenum; return TK_GREATER;	}
+"!"	{ yylval.i = linenum; return TK_NOT;	}
+"&&"	{ yylval.i = linenum; return TK_AND;	}
+"||"	{ yylval.i = linenum; return TK_OR;	}
 
 
 {INTEGER} {
@@ -130,11 +145,9 @@ return 	return TK_RET;
 */
 }
 
-\n { ++linenum; /* wrong number, because comment eats break line */ } 
+[ \t\n]+	/* Eat up white space. */
 
-[ \t]+	/* Eat up white space. */
-
-. return yytext[0];
+. { yylval.i = linenum; return yytext[0]; }
 
 
 

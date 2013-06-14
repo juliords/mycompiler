@@ -249,7 +249,7 @@ void printExpNode(ExpNode* p)
 					break;
 
 				case PrimFloat:
-					printf("%f", p->u.prim.u.f);
+					printf("%g", p->u.prim.u.f);
 					break;
 
 				case PrimChar:

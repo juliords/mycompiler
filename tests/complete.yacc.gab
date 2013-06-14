@@ -9,7 +9,7 @@ int main()
 	int i;
 	char[] s;
 	s = "Hello World \"#%d\"";
-	f = 12300.000000;
+	f = 12300;
 	i = -1;
 	while( (i < s[(i + 1)]) )
 	{

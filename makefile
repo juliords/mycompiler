@@ -15,7 +15,7 @@ LDLIBS=-lfl
 
 DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h 
 
-.phony: run all clean print-header %-yacc %-lex
+.phony: run all clean again print-header %-yacc %-lex
 .default: run
 
 run: print-header all testall-lex testall-yacc
@@ -44,6 +44,8 @@ $(YACCX): main.yacc.o yacc.o lex.o tree.o tree.print.o tree.check.o
 
 clean:
 	rm -f clex cyacc lex.* yacc.* *.o $(TESTFD)/*.out $(TESTFD)/*.err
+
+again: clean all
 
 # -------------------------------------------------------------------------
 
