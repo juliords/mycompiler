@@ -243,6 +243,8 @@ void checkDecFuncNode(DecFuncNode* p)
 {
 	if(!p) return;
 
+	cleanVarLocalList();
+
 	if(!getFunc(p->id))
 	{
 		func_list = newListNode(p, func_list);
@@ -253,7 +255,6 @@ void checkDecFuncNode(DecFuncNode* p)
 		fprintf(stderr,"ERROR: redefinition of function '%s'\n", p->id);
 	}
 
-	cleanVarLocalList();
 	checkBlockNode(p->block);
 }
 

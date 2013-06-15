@@ -3,7 +3,7 @@ LEX=lex
 YACC=yacc
 CC=gcc
 
-YACCX=cyacc
+YACCX=exec
 
 TESTFD=tests
 TESTFL=$(wildcard $(TESTFD)/*.in)

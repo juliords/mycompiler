@@ -14,7 +14,6 @@ Relatorio da apresentação:
 - Passar valor da linha pela informacao semantica de cada palavra reservada
 - Melhorar frases de erro
 - tratar headers de maneira diferente
-- transformar paramnode em decvarnode
 
 
 ----------------------------------------------

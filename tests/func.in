@@ -1,7 +1,7 @@
 
 void func2(int i, char c, float f, char[] s)
 {
-	s[0] = i+c;
+	s[0] = c;
 	return;
 }
 
