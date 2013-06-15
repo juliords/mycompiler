@@ -17,6 +17,7 @@ void printProgramNode(ProgramNode* p)
 
 	if(!p) return;
 
+	print_space("\n");
 	for(ln = p->dec; ln; ln = ln->next)
 	{
 		printDeclarationNode((DeclarationNode*)ln->data, 0);

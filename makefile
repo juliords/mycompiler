@@ -3,36 +3,40 @@ LEX=lex
 YACC=yacc
 CC=gcc
 
+YACCFLAGS=-d -v --debug
+CFLAGS=-ansi -Wall -O2 -Wno-unused-function
+LDLIBS=-lfl
+
+LEXS=src.lex
+YACCS=src.yacc
+
+DEPS=yacc.h tree.h tree.check.h tree.print.h macro.h 
+SRCS=main.c lex.c yacc.c tree.c tree.check.c tree.print.c
+
 YACCX=exec
 
 TESTFD=tests
 TESTFL=$(wildcard $(TESTFD)/*.in)
 
-YACCFLAGS=-d -v --debug
-CFLAGS=-ansi -Wall -O2 -Wno-unused-function
-LDLIBS=-lfl
-
-DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h 
+# -------------------------------------------------------------------------
 
 .phony: run all clean again print-header test-%
 .default: run
 
-run: print-header all testall
-
-# -------------------------------------------------------------------------
+run: print-header all test-all
 
 all: $(YACCX)
 
-lex.c: src.lex
+lex.c: $(LEXS)
 	$(LEX) -t $< > $@
 
-yacc.c yacc.h: src.yacc
+yacc.c yacc.h: $(YACCS)
 	$(YACC) $(YACCFLAGS) $<
 	mv y.tab.c yacc.c
 	mv y.tab.h yacc.h
 	mv y.output yacc.log
 
-$(YACCX): main.yacc.o yacc.o lex.o tree.o tree.print.o tree.check.o
+$(YACCX): $(SRCS:.c=.o)
 	$(CC) -o $@ $^ $(LDLIBS)
 
 %.o: %.c $(DEPS)
@@ -52,9 +56,9 @@ print-header:
 	@echo "----------------------------------------"
 
 test-%: $(YACCX) $(TESTFD)/%.in
-	@./$+
+	./$+
 
-testall: $(YACCX) 
+test-all: $(YACCX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
 		echo -n "Testing file '"; \

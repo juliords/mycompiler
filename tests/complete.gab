@@ -1,3 +1,4 @@
+
 float f;
 
 int printf(char[] s, int i);
