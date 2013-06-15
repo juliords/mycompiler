@@ -13,6 +13,8 @@ Relatorio da apresentação:
 - Adicionar contagem de linha no proprio lex (buscar funcao que pega cada char)
 - Passar valor da linha pela informacao semantica de cada palavra reservada
 - Melhorar frases de erro
+- tratar headers de maneira diferente
+- transformar paramnode em decvarnode
 
 
 ----------------------------------------------

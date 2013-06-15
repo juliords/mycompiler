@@ -3,26 +3,25 @@ LEX=lex
 YACC=yacc
 CC=gcc
 
-LEXX=clex
 YACCX=cyacc
 
 TESTFD=tests
 TESTFL=$(wildcard $(TESTFD)/*.in)
 
 YACCFLAGS=-d -v --debug
-CFLAGS=-ansi -Wall -O0 -Wno-unused-function -g
+CFLAGS=-ansi -Wall -O2 -Wno-unused-function
 LDLIBS=-lfl
 
 DEPS=yacc.h tree.h tree.print.h tree.check.h macro.h 
 
-.phony: run all clean again print-header %-yacc %-lex
+.phony: run all clean again print-header test-%
 .default: run
 
-run: print-header all testall-lex testall-yacc
+run: print-header all testall
 
 # -------------------------------------------------------------------------
 
-all: $(LEXX) $(YACCX)
+all: $(YACCX)
 
 lex.c: src.lex
 	$(LEX) -t $< > $@
@@ -33,9 +32,6 @@ yacc.c yacc.h: src.yacc
 	mv y.tab.h yacc.h
 	mv y.output yacc.log
 
-$(LEXX): main.lex.o lex.o
-	$(CC) -o $@ $^ $(LDLIBS)
-
 $(YACCX): main.yacc.o yacc.o lex.o tree.o tree.print.o tree.check.o
 	$(CC) -o $@ $^ $(LDLIBS)
 
@@ -43,7 +39,7 @@ $(YACCX): main.yacc.o yacc.o lex.o tree.o tree.print.o tree.check.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:
-	rm -f clex cyacc lex.* yacc.* *.o $(TESTFD)/*.out $(TESTFD)/*.err
+	rm -f $(YACCX) lex.* yacc.* *.o $(TESTFD)/*.out $(TESTFD)/*.err
 
 again: clean all
 
@@ -55,39 +51,20 @@ print-header:
 	@echo "Julio Ribeiro da Silva - 0911409" 
 	@echo "----------------------------------------"
 
-%-lex: $(LEXX) $(TESTFD)/%.in
+test-%: $(YACCX) $(TESTFD)/%.in
 	@./$+
 
-%-yacc: $(YACCX) $(TESTFD)/%.in
-	@./$+
-
-testall-lex: $(LEXX) 
+testall: $(YACCX) 
 	@echo 
 	@$(foreach f, $(TESTFL), \
-		echo -n "Testing lex ("; \
+		echo -n "Testing file '"; \
 		echo -n $(f); \
-		echo -n ")... "; \
-		./$< $(f) > $(f:.in=.lex.out); \
-		diff $(f:.in=.lex.out) $(f:.in=.lex.gab) >/dev/null; \
-		if [ $$? -eq 0 ]; then \
+		echo -n "'... "; \
+		./$< $(f) 1>$(f:.in=.out) 2>$(f:.in=.err); \
+		diff $(f:.in=.out) $(f:.in=.gab) >/dev/null; \
+		if [[ ( $$? -eq 0 ) && ( ! -s  $(f:.in=.err) ) ]]; then \
 			echo "OK!"; \
-			rm $(f:.in=.lex.out); \
-		else \
-			echo "ERROR!"; \
-		fi; \
-	)
-
-testall-yacc: $(YACCX) 
-	@echo 
-	@$(foreach f, $(TESTFL), \
-		echo -n "Testing yacc ("; \
-		echo -n $(f); \
-		echo -n ")... "; \
-		./$< $(f) 1>$(f:.in=.yacc.out) 2>$(f:.in=.yacc.err); \
-		diff $(f:.in=.yacc.out) $(f:.in=.yacc.gab) >/dev/null; \
-		if [[ ( $$? -eq 0 ) && ( ! -s  $(f:.in=.yacc.err) ) ]]; then \
-			echo "OK!"; \
-			rm $(f:.in=.yacc.out) $(f:.in=.yacc.err); \
+			rm $(f:.in=.out) $(f:.in=.err); \
 		else \
 			echo "ERROR!"; \
 		fi; \

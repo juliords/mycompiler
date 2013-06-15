@@ -35,8 +35,8 @@ ProgramNode *tree;
 	DeclarationNode	*declaracao;
 	TypeNode 	*tipo;
 	BaseType 	tipo_base;
+	DecVarNode 	*dec_var;
 	DecFuncNode 	*dec_funcao;
-	ParamNode	*parametro;
 	BlockNode	*bloco;
 	CmdNode 	*comando;
 	VarNode		*var;
@@ -76,7 +76,7 @@ ProgramNode *tree;
 %type <tipo_base>	tipo_base
 %type <dec_funcao>	dec_funcao
 %type <lista>		parametros
-%type <parametro>	parametro
+%type <dec_var>		parametro
 %type <bloco>		bloco
 %type <lista>		dec_variaveis
 %type <lista>		comandos
@@ -103,7 +103,7 @@ declaracao
 	;
 
 dec_variavel 
-	: tipo lista_nomes ';' { $$ = newDecVarNode($1, $2); }
+	: tipo lista_nomes ';' { $$ = newDecVarNodeList($1, $2); }
 	;
 
 lista_nomes 
@@ -134,14 +134,15 @@ parametros
 	;
 
 parametro 
-	: tipo TK_ID { $$ = newParamNode($1, $2); }
+	: tipo TK_ID { $$ = newDecVarNode($1, $2); }
 	;
 
 bloco 
 	: '{' dec_variaveis comandos '}' { $$ = newBlockNode($2, $3); }
 	| '{' dec_variaveis '}' { $$ = newBlockNode($2, NULL); }
 	| '{' comandos '}' { $$ = newBlockNode(NULL, $2); }
-	| '{' /* vazio */ '}' { $$ = NULL; }
+	| '{' /* vazio */ '}' { $$ = newBlockNode(NULL, NULL); }
+	| ';' { $$ = NULL; }
 	;
 
 dec_variaveis

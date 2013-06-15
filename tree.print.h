@@ -16,7 +16,7 @@ void printDeclarationNode(DeclarationNode* p, int tabs);
 void printDecVarNode(ListNode* p, int tabs);
 void printTypeNode(TypeNode* p);
 void printDecFuncNode(DecFuncNode* p, int tabs);
-void printParamNode(ParamNode* p);
+void printParamNode(DecVarNode* p);
 void printBlockNode(BlockNode* p, int tabs);
 void printCmdNode(CmdNode* p, int tabs);
 void printVarNode(VarNode* p);

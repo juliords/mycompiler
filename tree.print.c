@@ -104,32 +104,32 @@ void printDecFuncNode(DecFuncNode* p, int tabs)
 			printf(",");
 			print_space(" ");
 		}
-		printParamNode((ParamNode*)l->data);
+		printParamNode((DecVarNode*)l->data);
 	}
 	printf(")");
 
 	printBlockNode(p->block, tabs);
 }
 
-void printParamNode(ParamNode* p)
+void printParamNode(DecVarNode* p)
 {
 	if(!p) return;
 
 	printTypeNode(p->type);
-	printf(" %s", p->id);
+	printf(" %s", p->name);
 }
 
 void printBlockNode(BlockNode* p, int tabs)
 {
 	ListNode* l;
 
-	print_space("\n");
-	printTabs(tabs);
-	printf("{");
-	print_space("\n");
-
 	if(p)
 	{
+		print_space("\n");
+		printTabs(tabs);
+		printf("{");
+		print_space("\n");
+
 		printDecVarNode(p->var, tabs+1);
 
 		for(l = p->cmd; l; l = l->next)
@@ -137,10 +137,14 @@ void printBlockNode(BlockNode* p, int tabs)
 			printCmdNode((CmdNode*)l->data, tabs+1);
 			print_space("\n");
 		}
-	}
 
-	printTabs(tabs);
-	printf("}");
+		printTabs(tabs);
+		printf("}");
+	}
+	else
+	{
+		printf(";");
+	}
 }
 
 void printCmdNode(CmdNode* p, int tabs)

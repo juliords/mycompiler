@@ -63,21 +63,27 @@ DeclarationNode* newDeclarationNodeTypeDecFunc(DecFuncNode* func)
 	return p;
 }
 
-ListNode* newDecVarNode(TypeNode *type, ListNode *name)
+ListNode* newDecVarNodeList(TypeNode *type, ListNode *name)
 {
 	ListNode *p;
 	
 	for(p = name; p; p = p->next)
 	{
-		NEW(DecVarNode, v);
-
-		v->type = type;
-		v->name = (char*)p->data;
-		v->nref = 0;
-		p->data = v;
+		p->data = newDecVarNode(type, (char*)p->data);
 	}
 	
 	return name;
+}
+
+DecVarNode* newDecVarNode(TypeNode *type, char *name)
+{
+	NEW(DecVarNode, v);
+
+	v->type = type;
+	v->name = name;
+	v->nref = 0;
+	
+	return v;
 }
 
 TypeNode* newTypeNodeTypePrim(BaseType prim)
@@ -106,16 +112,6 @@ DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNod
 	p->block = block;
 
 	p->nref = 0;
-	
-	return p;
-}
-
-ParamNode* newParamNode(TypeNode *type, char *id )
-{
-	NEW(ParamNode, p);
-	
-	p->type = type;
-	p->id = id;
 	
 	return p;
 }

@@ -224,6 +224,7 @@ void checkDecVarNode(ListNode* p, DecVarType type)
 				}
 				break;
 
+			case DecVarParam:
 			case DecVarLocal:
 				if(!getLocalVar(v->name))
 				{
@@ -245,6 +246,7 @@ void checkDecFuncNode(DecFuncNode* p)
 	if(!getFunc(p->id))
 	{
 		func_list = newListNode(p, func_list);
+		checkDecVarNode(p->params, DecVarParam);
 	}
 	else
 	{
@@ -502,7 +504,7 @@ void checkCallNode(CallNode *p)
 		for(expl = p->exp,parl = p->dec->params; expl && parl; expl = expl->next, parl = parl->next)
 		{
 			ExpNode *exp = (ExpNode*)expl->data;
-			ParamNode* par = (ParamNode*)parl->data;
+			DecVarNode* par = (DecVarNode*)parl->data;
 			TypeNode *te, *tp;
 
 			checkExpNode(exp);
@@ -512,7 +514,7 @@ void checkCallNode(CallNode *p)
 
 			if(!compareTypeNode(te, tp))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(), par->id, p->id);
+				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(), par->name, p->id);
 			}
 		}
 

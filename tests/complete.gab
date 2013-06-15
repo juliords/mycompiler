@@ -1,5 +1,7 @@
 float f;
 
+int printf(char[] s, int i);
+
 int printc(char s)
 {
 }

@@ -38,14 +38,13 @@ ProgramNode* newProgramNode(ListNode *dec);
 DeclarationNode* newDeclarationNodeTypeDecVar(ListNode* var);
 DeclarationNode* newDeclarationNodeTypeDecFunc(DecFuncNode* func);
 
-ListNode* newDecVarNode(TypeNode *type, ListNode *name);
+ListNode* newDecVarNodeList(TypeNode *type, ListNode *name);
+DecVarNode* newDecVarNode(TypeNode *type, char *name);
 
 TypeNode* newTypeNodeTypePrim(BaseType prim);
 TypeNode* newTypeNodeTypeArray(TypeNode *array);
 
 DecFuncNode* newDecFuncNode(TypeNode *type, char *id, ListNode *params, BlockNode *block);
-
-ParamNode* newParamNode(TypeNode *type, char *id );
 
 BlockNode* newBlockNode(ListNode *var, ListNode *cmd );
 
@@ -111,6 +110,7 @@ struct DeclarationNode
 enum DecVarType
 {
 	DecVarGlobal,
+	DecVarParam,
 	DecVarLocal,
 };
 
@@ -150,14 +150,6 @@ struct DecFuncNode
 	BlockNode *block;
 
 	int nref;
-};
-
-/* --------------------------------------------------------------------------------- */
-
-struct ParamNode
-{
-	TypeNode *type;
-	char *id;
 };
 
 /* --------------------------------------------------------------------------------- */
