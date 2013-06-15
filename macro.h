@@ -6,6 +6,10 @@
 #include<stdlib.h>
 #include<stdarg.h>
 
+#define bool int
+#define true 1
+#define false 0
+
 #define ALLOCN(t, n) (t*)malloc((n)*sizeof(t))
 #define ALLOC(t) ALLOCN(t, 1)
 

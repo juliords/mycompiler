@@ -4,7 +4,7 @@ YACC=yacc
 CC=gcc
 
 YACCFLAGS=-d -v --debug
-CFLAGS=-ansi -Wall -O2 -Wno-unused-function
+CFLAGS=-ansi -Wall -O0 -Wno-unused-function -g
 LDLIBS=-lfl
 
 LEXS=src.lex

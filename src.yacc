@@ -93,8 +93,8 @@ programa
 	;
 
 declaracoes
-	: declaracao { $$ = newListNode($1, NULL); }
-	| declaracoes declaracao { $$ = newListNode($2, $1); }
+	: declaracao { $$ = newListNodeLast($1, NULL); }
+	| declaracoes declaracao { $$ = newListNodeLast($2, $1); }
 	;
 
 declaracao 
@@ -107,8 +107,8 @@ dec_variavel
 	;
 
 lista_nomes 
-	: TK_ID { $$ = newListNode($1, NULL); }
-	| lista_nomes ',' TK_ID { $$ = newListNode($3, $1); }
+	: TK_ID { $$ = newListNodeLast($1, NULL); }
+	| lista_nomes ',' TK_ID { $$ = newListNodeLast($3, $1); }
 	;
 
 tipo 
@@ -129,8 +129,8 @@ dec_funcao
 
 parametros 
 	: /* vazio */ { $$ = NULL; } 
-	| parametro { $$ = newListNode($1, NULL); } 
-	| parametros ',' parametro { $$ = newListNode($3, $1); }
+	| parametro { $$ = newListNodeLast($1, NULL); } 
+	| parametros ',' parametro { $$ = newListNodeLast($3, $1); }
 	;
 
 parametro 
@@ -151,8 +151,8 @@ dec_variaveis
 	;
 
 comandos
-	: comando { $$ = newListNode($1, NULL); }
-	| comandos comando { $$ = newListNode($2, $1); }
+	: comando { $$ = newListNodeLast($1, NULL); }
+	| comandos comando { $$ = newListNodeLast($2, $1); }
 	;
 
 comando 
@@ -201,8 +201,8 @@ chamada
 
 lista_exp 
 	: /* vazio */ { $$ = NULL; } 
-	| exp { $$ = newListNode($1, NULL); }
-	| lista_exp ',' exp { $$ = newListNode($3, $1); }
+	| exp { $$ = newListNodeLast($1, NULL); }
+	| lista_exp ',' exp { $$ = newListNodeLast($3, $1); }
 	;
 
 

@@ -3,7 +3,20 @@
 #include "tree.check.h"
 #include "macro.h"
 
-ListNode* newListNode(void *data, ListNode *list)
+ListNode* newListNodeFirst(void *data, ListNode *list)
+{
+	NEW(ListNode, p);
+
+	p->data = data;
+	p->next = list;
+
+	if(!list) p->last = p;
+	else p->last = list->last;
+
+	return p;
+}
+
+ListNode* newListNodeLast(void *data, ListNode *list)
 {
 	NEW(ListNode, p);
 

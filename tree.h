@@ -30,7 +30,8 @@ typedef struct 	CmdNode 	CmdNode;
 
 /* --------------------------------------------------------------------------------- */
 
-ListNode* newListNode(void *data, ListNode *next);
+ListNode* newListNodeFirst(void *data, ListNode *next);
+ListNode* newListNodeLast(void *data, ListNode *next);
 ListNode *catListNode(ListNode *a, ListNode *b);
 
 ProgramNode* newProgramNode(ListNode *dec);

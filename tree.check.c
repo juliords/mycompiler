@@ -4,15 +4,51 @@
 #include "tree.check.h"
 #include "macro.h"
 
-ListNode *var_global, *var_local, *func_list;
+void debug(EnvData *env)
+{
+	ListNode* l;
 
-DecVarNode* getGlobalVar(char *id)
+	printf("Vars: ");
+	for(l = env->var_list; l; l = l->next)
+	{
+		DecVarNode *v = (DecVarNode*)l->data;
+
+		if(!v) printf("NULL ");
+		else printf("%s ", v->name);
+	}
+	printf("\nFuncs: ");
+	for(l = env->func_list; l; l = l->next)
+	{
+		DecFuncNode *v = (DecFuncNode*)l->data;
+		printf("%s ", v->id);
+	}
+	if(env->curr_func) printf("\nCurr_func: %s\n", env->curr_func->id);
+	printf("----------------------------------\n");
+}
+
+EnvData* initEnvData()
+{
+	NEW(EnvData, e);
+
+	e->var_list = NULL;
+	e->func_list = NULL;
+	e->curr_func = NULL;
+
+	return e;
+}
+
+DecVarNode* getDecVar(EnvData *env, char *id, bool lastLevel)
 {
 	ListNode *l;
 
-	for(l = var_global; l; l = l->next)
+	for(l = env->var_list; l; l = l->next)
 	{
 		DecVarNode *found = (DecVarNode*)l->data;
+		if(!found)
+		{
+			if(lastLevel) break;
+			else continue;
+		}
 
 		if(!strcmp(found->name, id))
 		{
@@ -23,54 +59,37 @@ DecVarNode* getGlobalVar(char *id)
 	return NULL;
 }
 
-DecVarNode* getLocalVar(char *id)
+void pushBlockVar(EnvData *env)
 {
-	ListNode *l;
+	if(!env) return;
+	env->var_list = newListNodeFirst(NULL, env->var_list);
+}
 
-	for(l = var_local; l; l = l->next)
+void popBlockVar(EnvData *env)
+{
+	ListNode *l, *next;
+	if(!env) return;
+
+	for(l = env->var_list; l; l = next)
 	{
-		DecVarNode *found = (DecVarNode*)l->data;
+		next = l->next;
 
-		if(!strcmp(found->name, id))
+		if(!l->data)
 		{
-			return found;
+			free(l);
+			env->var_list = next;
+			break;
 		}
+
+		free(l);
 	}
-
-	return NULL;
 }
 
-DecVarNode* getVar(char *id)
-{
-	DecVarNode *p;
-
-	p = getLocalVar(id);
-	if(p) return p;
-
-	p = getGlobalVar(id);
-	if(p) return p;
-
-	return NULL;
-}
-
-void cleanVarLocalList()
-{
-	ListNode *p, *next;
-
-	for(p = var_local; p; p = next)
-	{
-		next = p->next;
-		free(p);
-	}
-
-	var_local = NULL;
-}
-
-DecFuncNode* getFunc(char *id)
+DecFuncNode* getDecFunc(EnvData *env, char *id)
 {
 	ListNode *l;
 
-	for(l = func_list; l; l = l->next)
+	for(l = env->func_list; l; l = l->next)
 	{
 		DecFuncNode *found = (DecFuncNode*)l->data;
 
@@ -141,20 +160,16 @@ TypeNode* getTypeFromExp(ExpNode *e)
 	return copyTypeNode(e->atype);
 }
 
-char *getCurrFuncName()
+char *getCurrFuncName(EnvData *env)
 {
-	DecFuncNode* f;
-	if(!func_list) return NULL;
-	f = (DecFuncNode*)func_list->last->data;
-	return f->id;
+	if(!env || !env->curr_func) return NULL;
+	return env->curr_func->id;
 }
 
-TypeNode *getTypeFromCurrFunc()
+TypeNode *getTypeFromCurrFunc(EnvData *env)
 {
-	DecFuncNode* f;
-	if(!func_list) return NULL;
-	f = (DecFuncNode*)func_list->last->data;
-	return copyTypeNode(f->type);
+	if(!env || !env->curr_func) return NULL;
+	return copyTypeNode(env->curr_func->type);
 }
 
 char *getVarName(VarNode* v)
@@ -175,31 +190,33 @@ char *getVarName(VarNode* v)
 void checkProgramNode(ProgramNode* p)
 {
 	ListNode* ln;
+	EnvData *env;
 
 	if(!p) return;
 
+	env = initEnvData();
 	for(ln = p->dec; ln; ln = ln->next)
 	{
-		checkDeclarationNode((DeclarationNode*)ln->data);
+		checkDeclarationNode(env, (DeclarationNode*)ln->data);
 	}
 }
 
-void checkDeclarationNode(DeclarationNode* p)
+void checkDeclarationNode(EnvData* env, DeclarationNode* p)
 {
 	if(!p) return;
 
 	switch(p->type)
 	{
 		case DecVar:
-			checkDecVarNode(p->u.var, DecVarGlobal);
+			checkDecVarNode(env, p->u.var, DecVarGlobal);
 			break;
 		case DecFunc:
-			checkDecFuncNode(p->u.func);
+			checkDecFuncNode(env, p->u.func);
 			break;
 	}
 }
 
-void checkDecVarNode(ListNode* p, DecVarType type)
+void checkDecVarNode(EnvData* env, ListNode* p, DecVarType type)
 {
 	ListNode* l;
 
@@ -211,69 +228,57 @@ void checkDecVarNode(ListNode* p, DecVarType type)
 
 		v->context = type;
 
-		switch(type)
+		if(!getDecVar(env, v->name, true))
 		{
-			case DecVarGlobal:
-				if(!getGlobalVar(v->name))
-				{
-					var_global = newListNode(v, var_global);
-				}
-				else
-				{
-					fprintf(stderr,"ERROR: redeclaration of global variable '%s'\n", v->name);
-				}
-				break;
-
-			case DecVarParam:
-			case DecVarLocal:
-				if(!getLocalVar(v->name))
-				{
-					var_local = newListNode(v, var_local);
-				}
-				else
-				{
-					fprintf(stderr,"ERROR: In function '%s': redeclaration of variable '%s'\n", getCurrFuncName(), v->name);
-				}
-				break;
+			env->var_list = newListNodeFirst(v, env->var_list);
+		}
+		else
+		{
+			fprintf(stderr,"ERROR: redeclaration of variable '%s'\n", v->name);
 		}
 	}
 }
 
-void checkDecFuncNode(DecFuncNode* p)
+void checkDecFuncNode(EnvData* env, DecFuncNode* p)
 {
 	if(!p) return;
 
-	cleanVarLocalList();
-
-	if(!getFunc(p->id))
+	if(!getDecFunc(env, p->id))
 	{
-		func_list = newListNode(p, func_list);
-		checkDecVarNode(p->params, DecVarParam);
+		env->func_list = newListNodeFirst(p, env->func_list);
 	}
 	else
 	{
 		fprintf(stderr,"ERROR: redefinition of function '%s'\n", p->id);
 	}
 
-	checkBlockNode(p->block);
+	pushBlockVar(env);
+	env->curr_func = p;
+
+	checkDecVarNode(env, p->params, DecVarParam);
+	checkBlockNode(env, p->block);
+
+	env->curr_func = NULL;
+	popBlockVar(env);
 }
 
-void checkBlockNode(BlockNode* p)
+void checkBlockNode(EnvData* env, BlockNode* p)
 {
 	ListNode* l;
+	if(!p) return;
 
-	if(p)
+	pushBlockVar(env);
+	
+	checkDecVarNode(env, p->var, DecVarLocal);
+	for(l = p->cmd; l; l = l->next)
 	{
-		checkDecVarNode(p->var, DecVarLocal);
-
-		for(l = p->cmd; l; l = l->next)
-		{
-			checkCmdNode((CmdNode*)l->data);
-		}
+		checkCmdNode(env, (CmdNode*)l->data);
 	}
+
+	popBlockVar(env);
 }
 
-void checkCmdNode(CmdNode* p)
+void checkCmdNode(EnvData* env, CmdNode* p)
 {
 	TypeNode *tv, *te;
 
@@ -282,99 +287,104 @@ void checkCmdNode(CmdNode* p)
 	switch(p->type)
 	{
 		case CmdIf:
-			checkExpNode(p->u.i.cond);
-			checkCmdNode(p->u.i.cmd_if);
-			checkCmdNode(p->u.i.cmd_else);
+			checkExpNode(env, p->u.i.cond);
+			checkCmdNode(env, p->u.i.cmd_if);
+			checkCmdNode(env, p->u.i.cmd_else);
 			break;
 
 		case CmdWhile:
-			checkExpNode(p->u.w.cond);
-			checkCmdNode(p->u.w.cmd);
+			checkExpNode(env, p->u.w.cond);
+			checkCmdNode(env, p->u.w.cmd);
 			break;
 
 		case CmdAssig:
-			checkVarNode(p->u.a.var);
-			checkExpNode(p->u.a.exp);
+			checkVarNode(env, p->u.a.var);
+			checkExpNode(env, p->u.a.exp);
 
 			tv = getTypeFromVar(p->u.a.var);
 			te = getTypeFromExp(p->u.a.exp);
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'\n", getCurrFuncName(),  getVarName(p->u.a.var));
+				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'\n", getCurrFuncName(env),  getVarName(p->u.a.var));
 			}
 			free(te); free(tv);
 
 			break;
 
 		case CmdRet:
-			checkExpNode(p->u.r.exp);
+			checkExpNode(env, p->u.r.exp);
 
 			te = getTypeFromExp(p->u.r.exp);
-			tv = getTypeFromCurrFunc();
+			tv = getTypeFromCurrFunc(env);
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName(env));
 			}
 			free(te); free(tv);
 
 			break;
 
 		case CmdCall: 
-			checkCallNode(p->u.c.call);
+			checkCallNode(env, p->u.c.call);
 			break;
 
 		case CmdBlock:
-			checkBlockNode(p->u.b.block);
+			checkBlockNode(env, p->u.b.block);
 			break;
 	}
 }
 
-void checkVarNode(VarNode* p)
+void checkVarNode(EnvData* env, VarNode* p)
 {
 	if(!p) return;
 
 	switch(p->type)
 	{
 		case VarId:
-			if( (p->u.b.dec = getVar(p->u.b.id)) )
+			if( (p->u.b.dec = getDecVar(env, p->u.b.id, false)) )
 			{
 				p->u.b.dec->nref++;
 				p->atype = copyTypeNode(p->u.b.dec->type);
 			}
 			else
 			{
-				fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(), p->u.b.id);
+				fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(env), p->u.b.id);
 			}
 			break;
 		case VarArray:
 		{
 			TypeNode* t;
-			checkVarNode(p->u.d.var);
-			checkExpNode(p->u.d.exp);
+			checkVarNode(env, p->u.d.var);
+			checkExpNode(env, p->u.d.exp);
 
 			t = p->u.d.exp->atype;
 			if(t && t->prim == TypeInt && t->dims == 0)
 			{
 				p->atype = copyTypeNode(p->u.d.var->atype);
 				p->atype->dims--;
+
+				if(p->atype->dims < 0)
+				{
+					fprintf(stderr,"ERROR: In function '%s': invalid index to scalar variable '%s'\n", getCurrFuncName(env), getVarName(p->u.d.var));
+				}
 			}
 			else
 			{
-				fprintf(stderr,"ERROR: In function '%s': index expression of var '%s' must be an integer\n", getCurrFuncName(), getVarName(p->u.d.var));
+				fprintf(stderr,"ERROR: In function '%s': index expression of var '%s' must be an integer\n", getCurrFuncName(env), getVarName(p->u.d.var));
 			}
 			break;
 		}
 	}
 }
 
-void checkExpNode(ExpNode *p)
+void checkExpNode(EnvData* env, ExpNode *p)
 {
 	if(!p) return;
 
 	switch(p->type)
 	{
 		case ExpVar:
-			checkVarNode(p->u.var.var);
+			checkVarNode(env, p->u.var.var);
 			p->atype = getTypeFromVar(p->u.var.var);
 			break;
 
@@ -410,15 +420,15 @@ void checkExpNode(ExpNode *p)
 		case ExpBin:
 		{
 			TypeNode *l, *r;
-			checkExpNode(p->u.bin.left);
-			checkExpNode(p->u.bin.right);
+			checkExpNode(env, p->u.bin.left);
+			checkExpNode(env, p->u.bin.right);
 			l = getTypeFromExp(p->u.bin.left);
 			r = getTypeFromExp(p->u.bin.right);
 
 			if(!l || !r || l->dims > 0 || r->dims > 0 ||
 			   l->prim == TypeVoid || r->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression of non-numeric type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression of non-numeric type\n", getCurrFuncName(env));
 				r->prim = TypeVoid;
 			}
 			else switch(p->u.bin.type)
@@ -455,12 +465,12 @@ void checkExpNode(ExpNode *p)
 		case ExpUn:
 		{
 			TypeNode *t;
-			checkExpNode(p->u.un.exp);
+			checkExpNode(env, p->u.un.exp);
 			t = getTypeFromExp(p->u.un.exp);
 
 			if(!t || t->dims > 0 || t->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression using of non-numeric type\n", getCurrFuncName());
+				fprintf(stderr,"ERROR: In function '%s': invalid expression using of non-numeric type\n", getCurrFuncName(env));
 				t->prim = TypeVoid;
 			}
 			else switch(p->u.un.type)
@@ -479,13 +489,15 @@ void checkExpNode(ExpNode *p)
 		}
 
 		case ExpCall:
-			checkCallNode(p->u.call.call);
+			checkCallNode(env, p->u.call.call);
 			p->atype = getTypeFromCall(p->u.call.call); 
 			break;
 
 		case ExpNew:
 		{
 			TypeNode *t = copyTypeNode(p->u.enew.type);
+			checkExpNode(env, p->u.enew.exp);
+
 			t->dims++;
 			p->atype = t;
 			break;
@@ -493,12 +505,12 @@ void checkExpNode(ExpNode *p)
 	}
 }
 
-void checkCallNode(CallNode *p)
+void checkCallNode(EnvData* env, CallNode *p)
 {
 	ListNode *expl, *parl;
 	if(!p) return;
 
-	if( (p->dec = getFunc(p->id)) ) 
+	if( (p->dec = getDecFunc(env, p->id)) ) 
 	{
 		p->dec->nref++;
 
@@ -508,30 +520,30 @@ void checkCallNode(CallNode *p)
 			DecVarNode* par = (DecVarNode*)parl->data;
 			TypeNode *te, *tp;
 
-			checkExpNode(exp);
+			checkExpNode(env, exp);
 
 			te = getTypeFromExp(exp);
 			tp = par->type;
 
 			if(!compareTypeNode(te, tp))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(), par->name, p->id);
+				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(env), par->name, p->id);
 			}
 		}
 
 		if(parl)
 		{
-			fprintf(stderr,"ERROR: In function '%s': insuficient number of arguments -> '%s'\n", getCurrFuncName(), p->id);
+			fprintf(stderr,"ERROR: In function '%s': insuficient number of arguments -> '%s'\n", getCurrFuncName(env), p->id);
 		}
 
 		if(expl)
 		{
-			fprintf(stderr,"ERROR: In function '%s': number of arguments exceeded -> '%s'\n", getCurrFuncName(), p->id);
+			fprintf(stderr,"ERROR: In function '%s': number of arguments exceeded -> '%s'\n", getCurrFuncName(env), p->id);
 		}
 	}
 	else
 	{
-		fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(), p->id);
+		fprintf(stderr,"ERROR: In function '%s': '%s' undeclared\n", getCurrFuncName(env), p->id);
 	}
 
 }
