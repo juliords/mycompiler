@@ -227,44 +227,44 @@ VarNode* newVarNodeVarArray(VarNode *var, ExpNode* exp)
 	return p;
 }
 
-ExpNode* newExpNodeExpValueInt(int i)
+ExpNode* newExpNodeExpConstInt(int i)
 {
 	NEW(ExpNode, p);
 	
-	p->type = ExpValue;
+	p->type = ExpConst;
 	p->u.prim.type = PrimInt;
 	p->u.prim.u.i = i;
 	
 	return p;
 }
 
-ExpNode* newExpNodeExpValueFloat(float f)
+ExpNode* newExpNodeExpConstFloat(float f)
 {
 	NEW(ExpNode, p);
 	
-	p->type = ExpValue;
+	p->type = ExpConst;
 	p->u.prim.type = PrimFloat;
 	p->u.prim.u.f = f;
 	
 	return p;
 }
 
-ExpNode* newExpNodeExpValueChar(char c)
+ExpNode* newExpNodeExpConstChar(char c)
 {
 	NEW(ExpNode, p);
 	
-	p->type = ExpValue;
+	p->type = ExpConst;
 	p->u.prim.type = PrimChar;
 	p->u.prim.u.c = c;
 	
 	return p;
 }
 
-ExpNode* newExpNodeExpValueStr(char *s)
+ExpNode* newExpNodeExpConstStr(char *s)
 {
 	NEW(ExpNode, p);
 	
-	p->type = ExpValue;
+	p->type = ExpConst;
 	p->u.prim.type = PrimStr;
 	p->u.prim.u.s = s;
 	

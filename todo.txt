@@ -4,7 +4,6 @@ Relatorio da apresentação:
 - Variavel char deve aceitar inteiro
 - Adicionar expressao do tipo cast
 - Tratar dimensao negativa
-- Mudar ExpValue -> ExpConst
 - Adicionar parametros às variaveis locais
 - Tratar escopo de variaveis (blocos)
 - Passar lista de variaveis por parametro (e não global)

@@ -172,10 +172,10 @@ var
 	;
 
 exp 
-	: TK_INT_I { $$ = newExpNodeExpValueInt($1); } 
-	| TK_FLOAT_I { $$ = newExpNodeExpValueFloat($1); } 
-	| TK_CHAR_I { $$ = newExpNodeExpValueChar($1); } 
-	| TK_STR { $$ = newExpNodeExpValueStr($1); } 
+	: TK_INT_I { $$ = newExpNodeExpConstInt($1); } 
+	| TK_FLOAT_I { $$ = newExpNodeExpConstFloat($1); } 
+	| TK_CHAR_I { $$ = newExpNodeExpConstChar($1); } 
+	| TK_STR { $$ = newExpNodeExpConstStr($1); } 
 	| var { $$ = newExpNodeExpVar($1); }
 	| '(' exp ')' { $$ = $2; }
 	| chamada { $$ = newExpNodeExpCall($1); }

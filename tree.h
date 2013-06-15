@@ -59,10 +59,10 @@ CmdNode* newCmdNodeCmdBlock(BlockNode *block);
 VarNode* newVarNodeVarId(char *id);
 VarNode* newVarNodeVarArray(VarNode *array, ExpNode* exp);
 
-ExpNode* newExpNodeExpValueInt(int i);
-ExpNode* newExpNodeExpValueFloat(float f);
-ExpNode* newExpNodeExpValueChar(char c);
-ExpNode* newExpNodeExpValueStr(char *s);
+ExpNode* newExpNodeExpConstInt(int i);
+ExpNode* newExpNodeExpConstFloat(float f);
+ExpNode* newExpNodeExpConstChar(char c);
+ExpNode* newExpNodeExpConstStr(char *s);
 ExpNode* newExpNodeExpVar(VarNode *var);
 ExpNode* newExpNodeExpBin(ExpBinType type, ExpNode *left, ExpNode *right);
 ExpNode* newExpNodeExpUn(ExpUnType type, ExpNode *exp);
@@ -248,7 +248,7 @@ struct VarNode
 enum ExpType
 {
 	ExpVar,
-	ExpValue,
+	ExpConst,
 	ExpBin,
 	ExpUn,
 	ExpCall,

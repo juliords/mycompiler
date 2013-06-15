@@ -388,7 +388,7 @@ void checkExpNode(EnvData* env, ExpNode *p)
 			p->atype = getTypeFromVar(p->u.var.var);
 			break;
 
-		case ExpValue:
+		case ExpConst:
 		{
 			NEW(TypeNode, t);
 			t->dims = 0;

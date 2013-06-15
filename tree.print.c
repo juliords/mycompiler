@@ -246,7 +246,7 @@ void printExpNode(ExpNode* p)
 			printVarNode(p->u.var.var);
 			break;
 
-		case ExpValue:
+		case ExpConst:
 			switch(p->u.prim.type)
 			{
 				case PrimInt:
