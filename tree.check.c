@@ -4,28 +4,6 @@
 #include "tree.check.h"
 #include "macro.h"
 
-void debug(EnvData *env)
-{
-	ListNode* l;
-
-	printf("Vars: ");
-	for(l = env->var_list; l; l = l->next)
-	{
-		DecVarNode *v = (DecVarNode*)l->data;
-
-		if(!v) printf("NULL ");
-		else printf("%s ", v->name);
-	}
-	printf("\nFuncs: ");
-	for(l = env->func_list; l; l = l->next)
-	{
-		DecFuncNode *v = (DecFuncNode*)l->data;
-		printf("%s ", v->id);
-	}
-	if(env->curr_func) printf("\nCurr_func: %s\n", env->curr_func->id);
-	printf("----------------------------------\n");
-}
-
 EnvData* initEnvData()
 {
 	NEW(EnvData, e);

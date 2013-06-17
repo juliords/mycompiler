@@ -253,6 +253,7 @@ enum ExpType
 	ExpUn,
 	ExpCall,
 	ExpNew,
+	ExpCast,
 };
 
 enum PrimitiveType
@@ -331,6 +332,11 @@ struct ExpNode
 			TypeNode *type;
 			ExpNode *exp;
 		} enew;
+
+		struct
+		{
+			ExpNode *exp;
+		} cast;
 	} u;
 };
 
