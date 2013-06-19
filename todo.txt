@@ -1,18 +1,4 @@
 
-Relatorio da apresentação:
-- Exp do tipo char eh convertido pra inteiro
-- Variavel char deve aceitar inteiro
-- Adicionar expressao do tipo cast
-- Comparacao (== e !=) deve aceitar referencia (dim > 0)
-- Condicionais não devem aceitar referencia, para que a consistencia com os operadores logicos (|| e &&) permaneça
-- Adicionar contagem de linha no proprio lex (buscar funcao que pega cada char)
-- Passar valor da linha pela informacao semantica de cada palavra reservada
-- Melhorar frases de erro
-- tratar headers de maneira diferente
-- usar sprintf ao inves de fprintf ou mesmo printf
-
-
-----------------------------------------------
 
 Tratamento de erros:
 - String não fechada

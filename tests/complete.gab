@@ -16,7 +16,7 @@ int main()
 	i = -1;
 	while( (i < s[(i + 1)]) )
 	{
-		if( (f <= 10) )
+		if( (f <= (float)10) )
 		{
 			printf(s, i);
 		}

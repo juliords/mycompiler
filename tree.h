@@ -129,10 +129,10 @@ struct DecVarNode
 
 enum BaseType
 {
-	TypeInt,
-	TypeChar,
-	TypeFloat,
 	TypeVoid,
+	TypeChar,
+	TypeInt,
+	TypeFloat,
 };
 
 struct TypeNode

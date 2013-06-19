@@ -357,6 +357,12 @@ void printExpNode(ExpNode* p)
 			printExpNode(p->u.enew.exp);
 			printf("]");
 			break;
+
+		case ExpCast:
+			printf("(");
+			printTypeNode(p->atype);
+			printf(")");
+			printExpNode(p->u.cast.exp);
 	}
 }
 

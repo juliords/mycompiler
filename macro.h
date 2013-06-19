@@ -23,5 +23,7 @@
 #define NEWN(t, v, n) t *v = ALLOCN(t, n); ALLOC_TEST(v);
 #define NEW(t, v) NEWN(t, v, 1)
 
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 #endif
 

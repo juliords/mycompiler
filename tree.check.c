@@ -102,10 +102,17 @@ TypeNode* copyTypeNode(TypeNode* t)
 /* return: 0 -> not equal ; 1 -> equal ; */
 int compareTypeNode(TypeNode* a, TypeNode* b)
 {
+	BaseType ta, tb;
+
 	if(!a || !b) 
 		return 0;
 	
-	if(a->prim != b->prim)
+	ta = a->prim;
+	if(ta == TypeChar) ta = TypeInt;
+	tb = b->prim;
+	if(tb == TypeChar) tb = TypeInt;
+
+	if(ta != tb)
 		return 0;
 
 	if(a->dims != b->dims)
@@ -160,7 +167,25 @@ char *getVarName(VarNode* v)
 		case VarArray:
 			return getVarName(v->u.d.var);
 	}
-	return "< without name >";
+	return "nil";
+}
+
+void createCast(ExpNode *e, BaseType prim)
+{
+	NEW(ExpNode, p);
+	NEW(TypeNode, t);
+	*p = *e;
+
+	if(prim == TypeChar)
+		t->prim = TypeInt;
+	else
+		t->prim = prim;
+
+	t->dims = 0;
+
+	e->type = ExpCast;
+	e->u.cast.exp = p;
+	e->atype = t;
 }
 
 /* -------------------------------------------------------------------- */
@@ -281,9 +306,17 @@ void checkCmdNode(EnvData* env, CmdNode* p)
 
 			tv = getTypeFromVar(p->u.a.var);
 			te = getTypeFromExp(p->u.a.exp);
+			
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'\n", getCurrFuncName(env),  getVarName(p->u.a.var));
+				if( !te->dims && !tv->dims && te->prim != TypeVoid && tv->prim != TypeVoid )
+				{
+					createCast(p->u.a.exp, tv->prim);
+				}
+				else
+				{
+					fprintf(stderr,"ERROR: In function '%s': incompatible expression assigned to variable '%s'\n", getCurrFuncName(env),  getVarName(p->u.a.var));
+				}
 			}
 			free(te); free(tv);
 
@@ -294,9 +327,17 @@ void checkCmdNode(EnvData* env, CmdNode* p)
 
 			te = getTypeFromExp(p->u.r.exp);
 			tv = getTypeFromCurrFunc(env);
+
 			if(!compareTypeNode(tv, te))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName(env));
+				if( !te->dims && !tv->dims && te->prim != TypeVoid && tv->prim != TypeVoid )
+				{
+					createCast(p->u.r.exp, tv->prim);
+				}
+				else
+				{
+					fprintf(stderr,"ERROR: In function '%s': incompatible return type\n", getCurrFuncName(env));
+				}
 			}
 			free(te); free(tv);
 
@@ -382,7 +423,7 @@ void checkExpNode(EnvData* env, ExpNode *p)
 					break;
 
 				case PrimChar:
-					t->prim = TypeChar;
+					t->prim = TypeInt;
 					break;
 
 				case PrimStr:
@@ -403,10 +444,9 @@ void checkExpNode(EnvData* env, ExpNode *p)
 			l = getTypeFromExp(p->u.bin.left);
 			r = getTypeFromExp(p->u.bin.right);
 
-			if(!l || !r || l->dims > 0 || r->dims > 0 ||
-			   l->prim == TypeVoid || r->prim == TypeVoid)
+			if(!l || !r || l->prim == TypeVoid || r->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression of non-numeric type\n", getCurrFuncName(env));
+				fprintf(stderr,"ERROR: In function '%s': invalid expression (binary operation)\n", getCurrFuncName(env));
 				r->prim = TypeVoid;
 			}
 			else switch(p->u.bin.type)
@@ -416,24 +456,61 @@ void checkExpNode(EnvData* env, ExpNode *p)
 				case ExpBinMult:
 				case ExpBinDiv:
 				{
-					if(l->prim == TypeFloat || r->prim == TypeFloat)
-						r->prim = TypeFloat;
+					if( l->dims > 0 || r->dims > 0 )
+					{
+						fprintf(stderr,"ERROR: In function '%s': invalid arithmetic operation using array\n", getCurrFuncName(env));
+						r->prim = TypeVoid;
+					}
 					else
-						r->prim = TypeInt;
+					{
+						if(l->prim == TypeFloat || r->prim == TypeFloat)
+						{
+							if(l->prim == TypeInt) 
+								createCast(p->u.bin.left, TypeFloat);
+							if(r->prim == TypeInt) 
+								createCast(p->u.bin.right, TypeFloat);
+
+							r->prim = TypeFloat;
+						}
+						else
+						{
+							r->prim = TypeInt;
+						}
+					}
 					break;
 				}
 
-				case ExpBinEQ:
 				case ExpBinLE:
 				case ExpBinGE:
 				case ExpBinLT:
 				case ExpBinGT:
+				{
+					if( l->dims > 0 || r->dims > 0 )
+					{
+						fprintf(stderr,"ERROR: In function '%s': invalid comparison operation using array\n", getCurrFuncName(env));
+						r->prim = TypeVoid;
+					}
+					else
+					{
+						if(l->prim == TypeInt && r->prim == TypeFloat) 
+							createCast(p->u.bin.left, TypeFloat);
+						else if(l->prim == TypeFloat && r->prim == TypeInt) 
+							createCast(p->u.bin.right, TypeFloat);
+
+						r->prim = TypeInt;
+					}
+					break;
+				}
+
+				case ExpBinEQ:
 				case ExpBinAnd:
 				case ExpBinOr:
 				{
 					r->prim = TypeInt;
+					r->dims = 0;
 					break;
 				}
+
 			}
 			free(l);
 			p->atype = r;
@@ -448,18 +525,12 @@ void checkExpNode(EnvData* env, ExpNode *p)
 
 			if(!t || t->dims > 0 || t->prim == TypeVoid)
 			{
-				fprintf(stderr,"ERROR: In function '%s': invalid expression using of non-numeric type\n", getCurrFuncName(env));
+				fprintf(stderr,"ERROR: In function '%s': invalid expression using of non-numeric type (unary operation)\n", getCurrFuncName(env));
 				t->prim = TypeVoid;
 			}
-			else switch(p->u.un.type)
+			else if( p->u.un.type == ExpUnNot )
 			{
-				case ExpUnMinus: 
-					if(t->prim == TypeChar)	t->prim = TypeInt;
-					break;
-
-				case ExpUnNot: 
-					t->prim = TypeInt; 
-					break;
+				t->prim = TypeInt; 
 			}
 
 			p->atype = t;
@@ -480,6 +551,8 @@ void checkExpNode(EnvData* env, ExpNode *p)
 			p->atype = t;
 			break;
 		}
+
+		case ExpCast: break;
 	}
 }
 
@@ -505,7 +578,14 @@ void checkCallNode(EnvData* env, CallNode *p)
 
 			if(!compareTypeNode(te, tp))
 			{
-				fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(env), par->name, p->id);
+				if( !te->dims && !tp->dims && te->prim != TypeVoid && tp->prim != TypeVoid )
+				{
+					createCast(exp, tp->prim);
+				}
+				else
+				{
+					fprintf(stderr,"ERROR: In function '%s': incompatible type of param '%s' -> '%s'\n", getCurrFuncName(env), par->name, p->id);
+				}
 			}
 		}
 
