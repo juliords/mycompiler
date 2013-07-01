@@ -2,6 +2,7 @@
 #include "tree.h"
 #include "tree.check.h"
 #include "tree.print.h"
+#include "asm.h"
 #include "yacc.h"
 
 extern FILE *yyin;

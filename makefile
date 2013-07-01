@@ -10,8 +10,8 @@ LDLIBS=-lfl
 LEXS=src.lex
 YACCS=src.yacc
 
-DEPS=yacc.h tree.h tree.check.h tree.print.h macro.h 
-SRCS=main.c lex.c yacc.c tree.c tree.check.c tree.print.c
+DEPS=yacc.h tree.h tree.check.h tree.print.h asm.h macro.h
+SRCS=main.c lex.c yacc.c tree.c tree.check.c tree.print.c asm.c
 
 YACCX=exec
 
@@ -20,6 +20,7 @@ TESTFL=$(wildcard $(TESTFD)/*.in)
 
 # -------------------------------------------------------------------------
 
+.SECONDARY:
 .phony: run all clean again print-header test-%
 .default: run
 

@@ -1,5 +1,4 @@
 
-
 Tratamento de erros:
 - String não fechada
 - Char não fechado
@@ -7,7 +6,6 @@ Tratamento de erros:
 - Variavel não declarada
 - Falha no parser antes de ???
 - Checagem de tipos em atribuição
-
 
 
 ----------------------------------------------
@@ -24,4 +22,17 @@ Dizer se variavel eh estatica, global ou local (automatica)
 
 - Qual expressao regular deve ser usada para pegar comentarios e strings nao
   fechadas?
+
+
+----------------------------------------------
+
+Coisas que preciso saber:
+1. tornar funcao e bloco visivel pra link externo
+2. declaracao de constantes
+3. alocacao de memoria na pilha (variaveis locais)
+4. passagem de parametros
+5. tratar comandos e expressoes
+
+- comentarios
+-- na declaracao de variaveis, setar referencia no assembly
 
