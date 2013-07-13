@@ -25,7 +25,11 @@ int main(int argc, char *argv[])
 	ret = yyparse();
 
 	checkProgramNode(tree);
+#if 0
 	printProgramNode(tree);
+#else
+	asmProgramNode(tree);
+#endif
 
 	return ret;
 }

@@ -3,6 +3,8 @@
 *.err
 *.o
 *.out
+*.bin
+*.s
 *~
 exec
 yacc.*
